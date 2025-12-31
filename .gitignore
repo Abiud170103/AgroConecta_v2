@@ -1,0 +1,51 @@
+# Archivos y carpetas a ignorar en Git
+
+# Archivos de configuración sensibles
+.env
+config/local.php
+
+# Archivos subidos por usuarios
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Logs del sistema
+logs/*
+!logs/.gitkeep
+
+# Archivos temporales
+*.tmp
+*.temp
+*.log
+
+# Dependencias de Composer
+vendor/
+composer.lock
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Cache
+cache/*
+!cache/.gitkeep
+
+# Archivos de backup
+*.backup
+*.bak
+*.sql
+
+# Configuraciones locales de Apache
+.htaccess.local
+
+# Archivos de testing
+tests/coverage/
+phpunit.xml
