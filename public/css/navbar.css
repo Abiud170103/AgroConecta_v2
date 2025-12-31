@@ -1,0 +1,243 @@
+/* ========================================
+   NAVBAR - SEGÚN MOCKUPS DE AGROCONECTA
+   ======================================== */
+
+/* Navbar Container */
+.navbar {
+    background: #28a745 !important;
+    padding: 0.75rem 0 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+}
+
+.container-fluid {
+    width: 100%;
+    padding: 0 2rem;
+    margin: 0 auto;
+}
+
+.navbar-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+/* Logo y Marca */
+.navbar-brand {
+    display: flex !important;
+    align-items: center !important;
+    text-decoration: none !important;
+    flex-shrink: 0;
+}
+
+.brand-logo {
+    height: 40px !important;
+    width: auto !important;
+    object-fit: contain !important;
+    margin-right: 0.5rem !important;
+}
+
+.brand-text {
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+}
+
+.navbar-brand:hover {
+    opacity: 0.9 !important;
+}
+
+/* Barra de Búsqueda */
+.navbar-search {
+    flex: 1;
+    max-width: 600px;
+}
+
+.search-form {
+    display: flex;
+    background: white;
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+.search-btn {
+    background: transparent;
+    border: none;
+    padding: 0 1.25rem;
+    color: #28a745;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: color 0.2s;
+}
+
+.search-btn:hover {
+    color: #1e7e34;
+}
+
+/* Acciones del Navbar (Carrito y Perfil) */
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-action {
+    color: white !important;
+    text-decoration: none !important;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    transition: opacity 0.2s;
+}
+
+.nav-action:hover {
+    opacity: 0.8;
+}
+
+.cart-link {
+    position: relative;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.user-link {
+    color: white !important;
+    text-decoration: none !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.btn-auth {
+    background: white !important;
+    color: #28a745 !important;
+    padding: 0.5rem 1.5rem !important;
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: all 0.2s !important;
+    border: none !important;
+}
+
+.btn-auth:hover {
+    background: #f8f9fa !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Botón de menú móvil */
+.mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.hamburger {
+    width: 25px;
+    height: 2px;
+    background: white;
+    transition: all 0.3s;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .navbar-search {
+        max-width: 400px;
+    }
+    
+    .user-text {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0 1rem;
+    }
+    
+    .navbar-wrapper {
+        gap: 1rem;
+    }
+    
+    .brand-text {
+        display: none;
+    }
+    
+    .navbar-search {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        max-width: 100%;
+        padding: 1rem;
+        background: #28a745;
+        display: none;
+    }
+    
+    .navbar-search.active {
+        display: block;
+    }
+    
+    .mobile-menu-btn {
+        display: flex;
+    }
+    
+    .navbar-actions {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .brand-logo {
+        height: 32px !important;
+    }
+    
+    .navbar-actions {
+        gap: 0.75rem;
+    }
+    
+    .nav-action {
+        font-size: 1rem;
+    }
+}
