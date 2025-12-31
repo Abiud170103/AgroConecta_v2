@@ -32,7 +32,6 @@
     
     <!-- CSS -->
     <link rel="stylesheet" href="<?= asset('css/app.css') ?>?v=<?= time() ?>">
-    <link rel="stylesheet" href="<?= asset('css/navbar.css') ?>?v=<?= time() ?>">
     <link rel="stylesheet" href="<?= asset('css/modern-enhancements.css') ?>?v=<?= time() ?>">
     <link rel="stylesheet" href="<?= asset('css/sidebar-modern.css') ?>?v=<?= time() ?>">
     <?php if(isset($additionalCSS)): ?>
@@ -80,52 +79,55 @@
             </div>
         </div>
         
-        <!-- Main Navigation - Según Mockup -->
+        <!-- Main Navigation -->
         <nav class="navbar" role="navigation" aria-label="Navegación principal">
-            <div class="container-fluid">
-                <div class="navbar-wrapper">
+            <div class="container">
+                <div class="navbar-content">
                     <!-- Brand Logo -->
                     <a href="<?= url('/') ?>" class="navbar-brand">
                         <img src="<?= asset('img/logo.png') ?>" alt="AgroConecta" class="brand-logo">
                         <span class="brand-text">AgroConecta</span>
                     </a>
                     
-                    <!-- Search Bar Central -->
-                    <div class="navbar-search">
+                    <!-- Mobile Menu Button -->
+                    <button class="mobile-menu-btn" type="button" aria-label="Abrir menú de navegación" aria-expanded="false">
+                        <span class="hamburger"></span>
+                        <span class="hamburger"></span>
+                        <span class="hamburger"></span>
+                    </button>
+                    
+                    <!-- Search Bar -->
+                    <div class="search-container">
                         <form action="<?= url('/productos/buscar') ?>" method="GET" class="search-form">
-                            <input type="text" name="q" class="search-input" placeholder="Buscar productos..." value="<?= $_GET['q'] ?? '' ?>" aria-label="Buscar productos">
+                            <input type="text" name="q" class="search-input" placeholder="Buscar productos frescos..." value="<?= $_GET['q'] ?? '' ?>" aria-label="Buscar productos">
+                            <select name="categoria" class="search-select" aria-label="Categoría">
+                                <option value="">Todas las categorías</option>
+                                <option value="vegetales" <?= ($_GET['categoria'] ?? '') === 'vegetales' ? 'selected' : '' ?>>🥕 Vegetales</option>
+                                <option value="frutas" <?= ($_GET['categoria'] ?? '') === 'frutas' ? 'selected' : '' ?>>🍎 Frutas</option>
+                                <option value="granos" <?= ($_GET['categoria'] ?? '') === 'granos' ? 'selected' : '' ?>>🌾 Granos</option>
+                                <option value="hierbas" <?= ($_GET['categoria'] ?? '') === 'hierbas' ? 'selected' : '' ?>>🌿 Hierbas</option>
+                            </select>
                             <button type="submit" class="search-btn" aria-label="Buscar">
                                 <i class="fas fa-search"></i>
                             </button>
                         </form>
                     </div>
                     
-                    <!-- Mobile Menu Button -->
-                    <button class="mobile-menu-btn" type="button" aria-label="Abrir menú" aria-expanded="false">
-                        <span class="hamburger"></span>
-                        <span class="hamburger"></span>
-                        <span class="hamburger"></span>
-                    </button>
-                    
-                    <!-- Right Side Actions -->
-                    <div class="navbar-actions">
-                        <?php if(isset($_SESSION['user_id'])): ?>
-                            <!-- Cart -->
-                            <a href="<?= url('/carrito') ?>" class="nav-action cart-link">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span class="cart-badge" id="cartBadge">0</span>
+                    <!-- Main Navigation Menu -->
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a href="<?= url('/') ?>" class="nav-link <?= $currentPage === 'home' ? 'active' : '' ?>">
+                                <i class="fas fa-home"></i> Inicio
                             </a>
-                            
-                            <!-- User Profile -->
-                            <div class="nav-action user-menu">
-                                <a href="<?= url('/perfil') ?>" class="user-link">
-                                    <i class="fas fa-user"></i>
-                                    <span class="user-text">Mi perfil</span>
-                                </a>
-                            </div>
-                        <?php else: ?>
-                            <a href="<?= url('/login') ?>" class="btn btn-auth">Iniciar Sesión</a>
-                        <?php endif; ?>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="<?= url('/productos') ?>" class="nav-link <?= $currentPage === 'productos' ? 'active' : '' ?>">
+                                <i class="fas fa-shopping-basket"></i> Productos
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?= url('/productos/categoria/vegetales') ?>" class="dropdown-link">🥕 Vegetales</a></li>
+                                <li><a href="<?= url('/productos/categoria/frutas') ?>" class="dropdown-link">🍎 Frutas</a></li>
+                                <li><a href="<?= url('/productos/categoria/granos') ?>" class="dropdown-link">🌾 Granos</a></li>
                                 <li><a href="<?= url('/productos/categoria/hierbas') ?>" class="dropdown-link">🌿 Hierbas</a></li>
                                 <li class="dropdown-divider"></li>
                                 <li><a href="<?= url('/productos/ofertas') ?>" class="dropdown-link">🔥 Ofertas</a></li>
