@@ -1,0 +1,507 @@
+/* ========================================
+   AGROCONECTA - ESTILOS DE AUTENTICACIÓN
+   Login, Registro, Recuperación de contraseña
+   ======================================== */
+
+/* === CONTENEDOR PRINCIPAL DE AUTENTICACIÓN === */
+.auth-page {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.auth-section {
+    width: 100%;
+    padding: 2rem 0;
+}
+
+.auth-container {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    padding: 3rem 2.5rem;
+    max-width: 500px;
+    margin: 0 auto;
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* === HEADER === */
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.auth-logo .logo-image {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.auth-logo .logo-text {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #28a745;
+    margin: 0;
+}
+
+.auth-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+    font-size: 0.95rem;
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* === FORMULARIO === */
+.auth-form {
+    margin-top: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-group label .text-danger {
+    color: #dc3545;
+    margin-left: 2px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-size: 0.95rem;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #28a745;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background: #fff5f5;
+}
+
+.form-control.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.invalid-feedback {
+    display: block;
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* === INPUT CON ICONO === */
+.input-icon-wrapper {
+    position: relative;
+}
+
+.input-icon-wrapper .form-control {
+    padding-left: 3rem;
+}
+
+.input-icon-wrapper i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.input-icon-wrapper .toggle-password {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    transition: color 0.3s;
+}
+
+.input-icon-wrapper .toggle-password:hover {
+    color: #28a745;
+}
+
+/* === CHECKBOX Y RECORDARME === */
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-check-input {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.form-check-input:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.form-check-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    cursor: pointer;
+    margin: 0;
+}
+
+.remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.forgot-password-link {
+    color: #28a745;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.forgot-password-link:hover {
+    color: #1e7e34;
+    text-decoration: underline;
+}
+
+/* === BOTONES === */
+.btn-primary {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #28a745, #34ce57);
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #218838, #28a745);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    background: #6c757d;
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* === REGISTRO/LOGIN ALTERNATIVO === */
+.auth-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.auth-footer p {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.auth-footer a {
+    color: #28a745;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.auth-footer a:hover {
+    color: #1e7e34;
+    text-decoration: underline;
+}
+
+/* === DIVIDER === */
+.auth-divider {
+    text-align: center;
+    margin: 1.5rem 0;
+    position: relative;
+}
+
+.auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #e9ecef;
+    z-index: 1;
+}
+
+.auth-divider span {
+    background: #ffffff;
+    padding: 0 1rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* === ALERTAS === */
+.alert {
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.alert-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.alert i {
+    font-size: 1.25rem;
+}
+
+/* === TOGGLE TIPO USUARIO (REGISTRO) === */
+.user-type-toggle {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.user-type-option {
+    flex: 1;
+    position: relative;
+}
+
+.user-type-option input[type="radio"] {
+    display: none;
+}
+
+.user-type-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.user-type-label:hover {
+    border-color: #28a745;
+    background: #ffffff;
+}
+
+.user-type-option input:checked + .user-type-label {
+    border-color: #28a745;
+    background: #e8f5e9;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+.user-type-icon {
+    font-size: 2rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.user-type-option input:checked + .user-type-label .user-type-icon {
+    color: #28a745;
+}
+
+.user-type-label strong {
+    font-size: 1rem;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.user-type-label small {
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-align: center;
+}
+
+/* === CAMPOS DE VENDEDOR (CONDICIONALES) === */
+.vendor-fields {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.vendor-fields.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* === TÉRMINOS Y CONDICIONES === */
+.terms-group {
+    margin: 1.5rem 0;
+}
+
+.terms-group .form-check-label {
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.terms-group .form-check-label a {
+    color: #28a745;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.terms-group .form-check-label a:hover {
+    text-decoration: underline;
+}
+
+/* === LOADING SPINNER === */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 576px) {
+    .auth-container {
+        padding: 2rem 1.5rem;
+    }
+    
+    .auth-title {
+        font-size: 1.5rem;
+    }
+    
+    .auth-logo .logo-text {
+        font-size: 1.5rem;
+    }
+    
+    .user-type-toggle {
+        flex-direction: column;
+    }
+    
+    .remember-forgot {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 400px) {
+    .auth-container {
+        padding: 1.5rem 1rem;
+    }
+    
+    .form-control {
+        font-size: 0.9rem;
+        padding: 0.75rem 0.875rem;
+    }
+}
