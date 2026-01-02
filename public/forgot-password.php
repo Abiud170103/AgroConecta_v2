@@ -27,6 +27,30 @@
         .navbar-brand img {
             height: 40px;
         }
+        .navbar-custom .nav-link {
+            color: #2c3e50 !important;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            margin: 0 0.25rem;
+        }
+        .navbar-custom .nav-link:hover {
+            color: #28a745 !important;
+            background-color: rgba(40, 167, 69, 0.1);
+            transform: translateY(-1px);
+        }
+        .navbar-custom .nav-link:focus {
+            color: #28a745 !important;
+        }
+        .navbar-custom .nav-link.btn.btn-success {
+            color: white !important;
+        }
+        .navbar-custom .nav-link.btn.btn-success:hover {
+            color: white !important;
+            background-color: #1e7e34 !important;
+            transform: translateY(-1px);
+        }
         body {
             padding-top: 76px;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
