@@ -45,6 +45,7 @@ header('Referrer-Policy: strict-origin-when-cross-origin');
 spl_autoload_register(function ($className) {
     $directories = [
         '../core/',
+        '../app/core/',
         '../app/controllers/',
         '../app/models/',
         '../config/'
@@ -68,7 +69,7 @@ define('ROOT_PATH', dirname(__DIR__));
 define('APP_PATH', ROOT_PATH . '/app');
 define('CONFIG_PATH', ROOT_PATH . '/config');
 define('PUBLIC_PATH', ROOT_PATH . '/public');
-define('BASE_URL', 'http://localhost/AgroConecta');
+define('BASE_URL', 'http://localhost/AgroConecta_v2/public');
 
 // Cargar configuración
 require_once '../config/database.php';
@@ -78,8 +79,9 @@ require_once '../config/database.php';
 // ============================================
 
 try {
-    // Crear instancia del router
-    $router = new Router();
+    // Crear instancia del router con base path
+    $basePath = '/AgroConecta_v2/public';
+    $router = new Router($basePath);
     
     // Cargar middleware
     require_once '../core/Middleware.php';

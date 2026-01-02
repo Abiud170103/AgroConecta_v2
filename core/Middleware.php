@@ -38,7 +38,7 @@ class AuthMiddleware implements MiddlewareInterface {
  */
 class GuestMiddleware implements MiddlewareInterface {
     public function handle() {
-        session_start();
+        // session_start() ya se llamó en index.php
         
         if (isset($_SESSION['user_id'])) {
             header('Location: /dashboard');

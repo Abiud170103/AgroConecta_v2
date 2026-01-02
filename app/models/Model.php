@@ -54,7 +54,7 @@ class Model {
         
         // Agregar timestamps si está habilitado
         if ($this->timestamps) {
-            $filteredData['fecha_creacion'] = date('Y-m-d H:i:s');
+            $filteredData['fecha_registro'] = date('Y-m-d H:i:s');
             $filteredData['fecha_actualizacion'] = date('Y-m-d H:i:s');
         }
         

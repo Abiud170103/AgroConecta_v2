@@ -138,8 +138,26 @@ class BaseController extends Controller {
         }
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
-                $this->jsonError('Token CSRF inválido', 403);
+            $sessionToken = $_SESSION['csrf_token'] ?? '';
+            
+            // Debug para desarrollo
+            if (defined('DEBUG') && DEBUG) {
+                error_log("CSRF Debug - Session Token: " . $sessionToken);
+                error_log("CSRF Debug - Provided Token: " . $token);
+            }
+            
+            if (empty($sessionToken)) {
+                $this->jsonError('Token CSRF no encontrado en sesión', 403);
+                return false;
+            }
+            
+            if (empty($token)) {
+                $this->jsonError('Token CSRF no proporcionado', 403);
+                return false;
+            }
+            
+            if (!hash_equals($sessionToken, $token)) {
+                $this->jsonError('Token CSRF inválido - tokens no coinciden', 403);
                 return false;
             }
         }

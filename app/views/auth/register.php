@@ -11,8 +11,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/public/css/app.css">
-    <link rel="stylesheet" href="/public/css/auth.css">
+    <link rel="stylesheet" href="public/css/app.css">
+    <link rel="stylesheet" href="public/css/auth.css">
 </head>
 <body class="auth-page">
 
@@ -24,7 +24,7 @@
                         <!-- Header -->
                         <div class="auth-header">
                             <div class="auth-logo">
-                                <img src="/public/img/logo.png" alt="AgroConecta" class="logo-image">
+                                <img src="public/img/logo.png" alt="AgroConecta" class="logo-image">
                                 <h1 class="logo-text">AgroConecta</h1>
                             </div>
                             <h2 class="auth-title">Crear Cuenta</h2>
@@ -49,7 +49,7 @@
                         <?php endif; ?>
 
                         <!-- Register Form -->
-                        <form class="auth-form" id="registerForm" action="/auth/register" method="POST">
+                        <form class="auth-form" id="registerForm" action="registro" method="POST">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             
                             <!-- Tipo de Usuario Toggle -->
@@ -289,8 +289,8 @@
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="terminos" name="terminos" required>
                                     <label class="form-check-label" for="terminos">
-                                        Acepto los <a href="/terminos" target="_blank">Términos y Condiciones</a> 
-                                        y la <a href="/privacidad" target="_blank">Política de Privacidad</a>
+                                        Acepto los <a href="terminos" target="_blank">Términos y Condiciones</a> 
+                                        y la <a href="privacidad" target="_blank">Política de Privacidad</a>
                                     </label>
                                 </div>
                             </div>
@@ -305,7 +305,7 @@
                         <div class="auth-footer">
                             <p>
                                 ¿Ya tienes cuenta? 
-                                <a href="/auth/login">Inicia sesión aquí</a>
+                                <a href="login">Inicia sesión aquí</a>
                             </p>
                         </div>
                     </div>
@@ -317,7 +317,7 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
-    <script src="/public/js/auth.js"></script>
+    <script src="public/js/auth.js"></script>
     <script>
         // Toggle campos de vendedor
         document.querySelectorAll('input[name="tipo_usuario"]').forEach(radio => {

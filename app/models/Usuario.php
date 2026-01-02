@@ -12,6 +12,7 @@ require_once 'Model.php';
 class Usuario extends Model {
     protected $table = 'Usuario';
     protected $primaryKey = 'id_usuario';
+    protected $timestamps = false;  // La tabla maneja timestamps automáticamente
     
     protected $fillable = [
         'nombre',

@@ -11,8 +11,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/AgroConecta_v2/public/css/app.css">
-    <link rel="stylesheet" href="/AgroConecta_v2/public/css/auth.css">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/auth.css">
     
     <style>
         .navbar-custom {
@@ -85,8 +85,8 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="/AgroConecta_v2/">
-                <img src="/AgroConecta_v2/public/img/logo.png" alt="AgroConecta" class="me-2">
+            <a class="navbar-brand d-flex align-items-center" href="../">
+                <img src="img/logo.png" alt="AgroConecta" class="me-2">
                 <span class="fw-bold text-success">AgroConecta</span>
             </a>
             
@@ -97,19 +97,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/AgroConecta_v2/#productos">Productos</a>
+                        <a class="nav-link" href="../#productos">Productos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/AgroConecta_v2/#nosotros">Nosotros</a>
+                        <a class="nav-link" href="../#nosotros">Nosotros</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/AgroConecta_v2/public/login">
+                        <a class="nav-link active" href="login">
                             <i class="fas fa-sign-in-alt me-1"></i>
                             Iniciar Sesión
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-success text-white px-3 rounded-pill" href="/AgroConecta_v2/public/registro">
+                        <a class="nav-link btn btn-success text-white px-3 rounded-pill" href="registro">
                             <i class="fas fa-user-plus me-1"></i>
                             Registrarse
                         </a>
@@ -127,7 +127,7 @@
                         <!-- Header -->
                         <div class="auth-header">
                             <div class="auth-logo">
-                                <img src="/AgroConecta_v2/public/img/logo.png" alt="AgroConecta" class="logo-image">
+                                <img src="img/logo.png" alt="AgroConecta" class="logo-image">
                                 <h1 class="logo-text">AgroConecta</h1>
                             </div>
                             <h2 class="auth-title">¡Bienvenido de vuelta!</h2>
@@ -154,7 +154,7 @@
                         <?php endif; ?>
 
                         <!-- Login Form -->
-                        <form class="auth-form" id="loginForm" action="/AgroConecta_v2/public/login" method="POST">
+                        <form class="auth-form" id="loginForm" action="login" method="POST">
                             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
                             
                             <!-- Email -->
@@ -212,7 +212,7 @@
                                         Recordarme
                                     </label>
                                 </div>
-                                <a href="/AgroConecta_v2/public/olvide-password" class="forgot-password-link">
+                                <a href="olvide-password" class="forgot-password-link">
                                     ¿Olvidaste tu contraseña?
                                 </a>
                             </div>
@@ -234,7 +234,7 @@
                         <div class="auth-footer">
                             <p>
                                 ¿No tienes cuenta? 
-                                <a href="/AgroConecta_v2/public/registro">Regístrate aquí</a>
+                                <a href="registro">Regístrate aquí</a>
                             </p>
                         </div>
                     </div>
@@ -245,6 +245,6 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/AgroConecta_v2/public/js/auth.js"></script>
+    <script src="js/auth.js"></script>
 </body>
 </html>

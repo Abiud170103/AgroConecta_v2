@@ -35,16 +35,21 @@ class AuthController extends BaseController {
      * Procesa el login
      */
     public function processLogin() {
+        error_log("processLogin called - Method: " . $_SERVER['REQUEST_METHOD']);
+        
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/login');
             return;
         }
         
-        if (!$this->validateCSRF()) return;
+        // Temporalmente comentado para debugging
+        // if (!$this->validateCSRF()) return;
         
         $email = $this->sanitizeInput($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         $remember = isset($_POST['remember']);
+        
+        error_log("Login attempt - Email: $email");
         
         // Validación básica
         if (empty($email) || empty($password)) {
@@ -103,7 +108,7 @@ class AuthController extends BaseController {
      */
     public function processRegister() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/auth/register');
+            $this->redirect('/registro');
             return;
         }
         
@@ -127,7 +132,7 @@ class AuthController extends BaseController {
             $_SESSION['registration_errors'] = $errors;
             $_SESSION['registration_data'] = $data;
             $this->setFlashMessage('error', 'Por favor corrige los errores en el formulario');
-            $this->redirect('/auth/register');
+            $this->redirect('/registro');
             return;
         }
         
@@ -159,7 +164,7 @@ class AuthController extends BaseController {
                 $this->logActivity('user_registered', "New user: {$data['email']} ({$data['tipo_usuario']})");
                 
                 $this->setFlashMessage('success', '¡Cuenta creada exitosamente! Revisa tu email para verificar tu cuenta.');
-                $this->redirect('/auth/login');
+                $this->redirect('/login');
             } else {
                 throw new Exception('Error al crear la cuenta');
             }
@@ -167,7 +172,7 @@ class AuthController extends BaseController {
         } catch (Exception $e) {
             $this->logActivity('registration_failed', $e->getMessage());
             $this->setFlashMessage('error', 'Error al crear la cuenta. Inténtalo de nuevo.');
-            $this->redirect('/auth/register');
+            $this->redirect('/registro');
         }
     }
     
@@ -206,7 +211,7 @@ class AuthController extends BaseController {
      */
     public function processForgotPassword() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/auth/forgot-password');
+            $this->redirect('/olvide-password');
             return;
         }
         
@@ -216,7 +221,7 @@ class AuthController extends BaseController {
         
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->setFlashMessage('error', 'Email inválido');
-            $this->redirect('/auth/forgot-password');
+            $this->redirect('/olvide-password');
             return;
         }
         
@@ -230,7 +235,7 @@ class AuthController extends BaseController {
         
         // Siempre mostrar mensaje de éxito por seguridad
         $this->setFlashMessage('success', 'Si el email existe, recibirás instrucciones para recuperar tu contraseña');
-        $this->redirect('/auth/login');
+        $this->redirect('/login');
     }
     
     /**
@@ -244,7 +249,7 @@ class AuthController extends BaseController {
         
         if (empty($token)) {
             $this->setFlashMessage('error', 'Token inválido');
-            $this->redirect('/auth/login');
+            $this->redirect('/login');
             return;
         }
         
@@ -270,7 +275,7 @@ class AuthController extends BaseController {
      */
     public function processResetPassword() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/auth/login');
+            $this->redirect('/login');
             return;
         }
         
@@ -283,13 +288,13 @@ class AuthController extends BaseController {
         // Validaciones
         if (empty($password) || strlen($password) < 6) {
             $this->setFlashMessage('error', 'La contraseña debe tener al menos 6 caracteres');
-            $this->redirect('/auth/reset-password/' . $token);
+            $this->redirect('/reset-password/' . $token);
             return;
         }
         
         if ($password !== $passwordConfirm) {
             $this->setFlashMessage('error', 'Las contraseñas no coinciden');
-            $this->redirect('/auth/reset-password/' . $token);
+            $this->redirect('/reset-password/' . $token);
             return;
         }
         
@@ -306,10 +311,10 @@ class AuthController extends BaseController {
         if ($userModel->updatePassword($user['id_usuario'], $password)) {
             $this->logActivity('password_reset_success', "User ID: {$user['id_usuario']}");
             $this->setFlashMessage('success', 'Contraseña actualizada correctamente');
-            $this->redirect('/auth/login');
+            $this->redirect('/login');
         } else {
             $this->setFlashMessage('error', 'Error al actualizar la contraseña');
-            $this->redirect('/auth/reset-password/' . $token);
+            $this->redirect('/reset-password/' . $token);
         }
     }
     
@@ -365,6 +370,10 @@ class AuthController extends BaseController {
     private function getDashboardUrl() {
         if (!$this->isLoggedIn) return '/';
         
+        // Temporal: redirigir a página principal hasta implementar dashboards
+        return '/';
+        
+        /* TODO: Implementar dashboards reales
         switch ($this->currentUser['tipo_usuario']) {
             case 'admin':
                 return '/admin/dashboard';
@@ -375,6 +384,7 @@ class AuthController extends BaseController {
             default:
                 return '/';
         }
+        */
     }
     
     /**
