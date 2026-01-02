@@ -13,8 +13,8 @@ echo "<h1>🔍 Debug del Router</h1>";
 
 // Constantes y rutas
 define('BASE_PATH', realpath(__DIR__ . '/..'));
-define('APP_PATH', BASE_PATH . '/app');
-
+define('APP_PATH', BASE_PATH . '/app');define('PUBLIC_PATH', BASE_PATH . '/public');
+define('BASE_URL', 'http://localhost/AgroConecta_v2/public');
 echo "<h2>📋 Configuración del Sistema:</h2>";
 echo "<p><strong>BASE_PATH:</strong> " . BASE_PATH . "</p>";
 echo "<p><strong>APP_PATH:</strong> " . APP_PATH . "</p>";

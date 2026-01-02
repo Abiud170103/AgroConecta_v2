@@ -6,8 +6,7 @@ error_reporting(E_ALL);
 
 // Constantes básicas
 define('BASE_PATH', realpath(__DIR__ . '/..'));
-define('APP_PATH', BASE_PATH . '/app');
-define('BASE_URL', 'http://localhost/AgroConecta_v2/public');
+define('APP_PATH', BASE_PATH . '/app');define('PUBLIC_PATH', BASE_PATH . '/public');define('BASE_URL', 'http://localhost/AgroConecta_v2/public');
 
 // Incluir archivos necesarios
 require_once '../config/database.php';
