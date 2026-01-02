@@ -1,12 +1,16 @@
 # AgroConecta - Configuración de Apache
-# Archivo .htaccess para redirecciones y configuración
+# Redireccionar automaticamente a index.php cuando se accede a la raiz
 
+# Habilitar rewrite
 RewriteEngine On
 
-# Redireccionar todo el tráfico al index.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+# Si se accede a la raiz sin archivo, servir index.php
+DirectoryIndex index.php
+
+# Redireccionar rutas de autenticacion a public
+RewriteRule ^login/?$ public/login.php [L,R=301]
+RewriteRule ^register/?$ public/register.php [L,R=301]
+RewriteRule ^forgot-password/?$ public/forgot-password.php [L,R=301]
 
 # Configuraciones de seguridad
 # Denegar acceso a archivos de configuración

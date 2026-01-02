@@ -11,12 +11,87 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/public/css/app.css">
-    <link rel="stylesheet" href="/public/css/auth.css">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/auth.css">
+    
+    <style>
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .navbar-brand img {
+            height: 40px;
+        }
+        body {
+            padding-top: 76px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+        .auth-container {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 3rem 2.5rem;
+            max-width: 600px;
+            margin: 2rem auto;
+            animation: fadeInUp 0.5s ease;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
-<body class="auth-page">
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="../index.php">
+                <img src="img/logo.png" alt="AgroConecta" class="me-2">
+                <span class="fw-bold text-success">AgroConecta</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.php#productos">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.php#nosotros">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.php">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            Iniciar Sesión
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-success text-white px-3 rounded-pill active" href="register.php">
+                            <i class="fas fa-user-plus me-1"></i>
+                            Registrarse
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <section class="auth-section">
+    <section class="auth-section py-5">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-6 col-md-8">
@@ -24,7 +99,7 @@
                         <!-- Header -->
                         <div class="auth-header">
                             <div class="auth-logo">
-                                <img src="/public/img/logo.png" alt="AgroConecta" class="logo-image">
+                                <img src="img/logo.png" alt="AgroConecta" class="logo-image">
                                 <h1 class="logo-text">AgroConecta</h1>
                             </div>
                             <h2 class="auth-title">Crear Cuenta</h2>
@@ -49,7 +124,7 @@
                         <?php endif; ?>
 
                         <!-- Register Form -->
-                        <form class="auth-form" id="registerForm" action="/auth/register" method="POST">
+                        <form class="auth-form" id="registerForm" action="register.php" method="POST">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             
                             <!-- Tipo de Usuario Toggle -->
@@ -289,8 +364,8 @@
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="terminos" name="terminos" required>
                                     <label class="form-check-label" for="terminos">
-                                        Acepto los <a href="/terminos" target="_blank">Términos y Condiciones</a> 
-                                        y la <a href="/privacidad" target="_blank">Política de Privacidad</a>
+                                        Acepto los <a href="#" onclick="alert('Página en desarrollo'); return false;" target="_blank">Términos y Condiciones</a> 
+                                        y la <a href="#" onclick="alert('Página en desarrollo'); return false;" target="_blank">Política de Privacidad</a>
                                     </label>
                                 </div>
                             </div>
@@ -305,7 +380,7 @@
                         <div class="auth-footer">
                             <p>
                                 ¿Ya tienes cuenta? 
-                                <a href="/auth/login">Inicia sesión aquí</a>
+                                <a href="login.php">Inicia sesión aquí</a>
                             </p>
                         </div>
                     </div>

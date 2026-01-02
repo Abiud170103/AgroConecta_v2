@@ -4,6 +4,7 @@
    ======================================== */
 
 /* === CONTENEDOR PRINCIPAL DE AUTENTICACIÓN === */
+/* Comentado para usar el nuevo fondo coherente
 .auth-page {
     background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
     min-height: 100vh;
@@ -12,12 +13,14 @@
     justify-content: center;
     padding: 2rem 1rem;
 }
+*/
 
 .auth-section {
     width: 100%;
     padding: 2rem 0;
 }
 
+/* El auth-container ahora se define en los estilos inline de cada página
 .auth-container {
     background: #ffffff;
     border-radius: 20px;
@@ -27,6 +30,7 @@
     margin: 0 auto;
     animation: fadeInUp 0.5s ease;
 }
+*/
 
 @keyframes fadeInUp {
     from {
