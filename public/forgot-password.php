@@ -148,7 +148,7 @@
                         <?php endif; ?>
 
                         <!-- Forgot Password Form -->
-                        <form class="auth-form" id="forgotPasswordForm" action="forgot-password.php" method="POST">
+                        <form class="auth-form" id="forgotPasswordForm" action="/AgroConecta_v2/public/olvide-password" method="POST">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             
                             <!-- Email -->

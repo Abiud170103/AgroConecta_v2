@@ -152,7 +152,7 @@
                         <?php endif; ?>
 
                         <!-- Login Form -->
-                        <form class="auth-form" id="loginForm" action="login.php" method="POST">
+                        <form class="auth-form" id="loginForm" action="/AgroConecta_v2/public/login" method="POST">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             
                             <!-- Email -->

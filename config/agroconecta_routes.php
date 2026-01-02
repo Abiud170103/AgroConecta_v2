@@ -43,13 +43,13 @@ $router->get('/api/productos/autocompletar', 'ProductController@autocomplete')->
 
 // Rutas para invitados (no autenticados)
 $router->group(['middleware' => ['guest']], function($router) {
-    $router->get('/login', 'AuthController@showLogin')->name('login');
+    $router->get('/login', 'AuthController@login')->name('login');
     $router->post('/login', 'AuthController@processLogin')->name('login.process');
-    $router->get('/registro', 'AuthController@showRegister')->name('register');
+    $router->get('/registro', 'AuthController@register')->name('register');
     $router->post('/registro', 'AuthController@processRegister')->name('register.process');
-    $router->get('/olvide-password', 'AuthController@showForgotPassword')->name('password.forgot');
+    $router->get('/olvide-password', 'AuthController@forgotPassword')->name('password.forgot');
     $router->post('/olvide-password', 'AuthController@processForgotPassword')->name('password.forgot.process');
-    $router->get('/reset-password/{token}', 'AuthController@showResetPassword')->name('password.reset');
+    $router->get('/reset-password/{token}', 'AuthController@resetPassword')->name('password.reset');
     $router->post('/reset-password', 'AuthController@processResetPassword')->name('password.reset.process');
 });
 

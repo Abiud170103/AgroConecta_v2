@@ -36,7 +36,7 @@ class AuthController extends BaseController {
      */
     public function processLogin() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/auth/login');
+            $this->redirect('/login');
             return;
         }
         
@@ -49,7 +49,7 @@ class AuthController extends BaseController {
         // Validación básica
         if (empty($email) || empty($password)) {
             $this->setFlashMessage('error', 'Email y contraseña son requeridos');
-            $this->redirect('/auth/login');
+            $this->redirect('/login');
             return;
         }
         
@@ -59,14 +59,14 @@ class AuthController extends BaseController {
         if (!$user) {
             $this->logActivity('login_failed', "Email: {$email}");
             $this->setFlashMessage('error', 'Email o contraseña incorrectos');
-            $this->redirect('/auth/login');
+            $this->redirect('/login');
             return;
         }
         
         // Verificar si la cuenta está verificada (opcional)
         if (!$user['verificado']) {
             $this->setFlashMessage('error', 'Debes verificar tu cuenta por email antes de continuar');
-            $this->redirect('/auth/login');
+            $this->redirect('/login');
             return;
         }
         
