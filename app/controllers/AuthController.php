@@ -28,7 +28,7 @@ class AuthController extends BaseController {
         $this->setViewData('error', $this->getFlashMessage('error'));
         $this->setViewData('success', $this->getFlashMessage('success'));
         
-        $this->render('auth/login');
+        $this->render('auth/login', [], 'simple');
     }
     
     /**
@@ -100,7 +100,7 @@ class AuthController extends BaseController {
         $this->setViewData('error', $this->getFlashMessage('error'));
         $this->setViewData('success', $this->getFlashMessage('success'));
         
-        $this->render('auth/register');
+        $this->render('auth/register', [], 'simple');
     }
     
     /**
@@ -203,7 +203,8 @@ class AuthController extends BaseController {
         $this->setViewData('error', $this->getFlashMessage('error'));
         $this->setViewData('success', $this->getFlashMessage('success'));
         
-        $this->render('auth/forgot-password');
+        // Usar layout simple hasta arreglar el layout principal
+        $this->render('auth/forgot-password', [], 'simple');
     }
     
     /**
