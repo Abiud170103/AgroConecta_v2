@@ -23,9 +23,9 @@
                     <div class="auth-container">
                         <!-- Header -->
                         <div class="auth-header">
-                            <div class="auth-logo">
-                                <img src="public/img/logo.png" alt="AgroConecta" class="logo-image">
-                                <h1 class="logo-text">AgroConecta</h1>
+                            <div class="text-center mb-4">
+                                <span style="font-size: 3rem; color: #28a745;">🌱</span>
+                                <h1 class="h3 fw-bold text-dark mt-2">AgroConecta</h1>
                             </div>
                             <h2 class="auth-title">Nueva Contraseña</h2>
                             <p class="auth-subtitle">
@@ -34,32 +34,36 @@
                         </div>
 
                         <!-- Alertas -->
-                        <?php if(isset($error) && $error): ?>
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <?= htmlspecialchars($error) ?>
+                        <?php 
+                        require_once '../../core/SessionManager.php';
+                        if (SessionManager::getFlash('error')): 
+                        ?>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <?= htmlspecialchars(SessionManager::getFlash('error')) ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                         <?php endif; ?>
 
-                        <?php if(isset($success) && $success): ?>
-                        <div class="alert alert-success">
-                            <i class="fas fa-check-circle"></i>
-                            <?= htmlspecialchars($success) ?>
+                        <?php if (SessionManager::getFlash('success')): ?>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <?= htmlspecialchars(SessionManager::getFlash('success')) ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                         <?php endif; ?>
 
                         <!-- Reset Password Form -->
-                        <form class="auth-form" id="resetPasswordForm" action="reset-password" method="POST">
-                            <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
+                        <form class="auth-form" id="resetPasswordForm" action="../controllers/auth-router.php?action=processResetPassword" method="POST">
+                            <input type="hidden" name="_token" value="<?= SessionManager::generateCSRF() ?>">
                             <input type="hidden" name="token" value="<?= htmlspecialchars($token ?? '') ?>">
                             
                             <!-- Nueva Contraseña -->
-                            <div class="form-group">
-                                <label for="password">
-                                    Nueva Contraseña <span class="text-danger">*</span>
+                            <div class="form-group mb-4">
+                                <label for="password" class="form-label fw-semibold">
+                                    <i class="fas fa-lock me-2 text-success"></i>Nueva Contraseña <span class="text-danger">*</span>
                                 </label>
-                                <div class="input-icon-wrapper">
-                                    <i class="fas fa-lock"></i>
+                                <div class="input-icon-wrapper position-relative">
                                     <input type="password" 
                                            class="form-control" 
                                            id="password" 
@@ -68,7 +72,7 @@
                                            required 
                                            autofocus
                                            minlength="6">
-                                    <button type="button" class="btn btn-link toggle-password" tabindex="-1">
+                                    <button type="button" class="btn btn-link toggle-password position-absolute end-0 top-50 translate-middle-y" tabindex="-1">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
@@ -76,12 +80,11 @@
                             </div>
 
                             <!-- Confirmar Contraseña -->
-                            <div class="form-group">
-                                <label for="password_confirm">
-                                    Confirmar Contraseña <span class="text-danger">*</span>
+                            <div class="form-group mb-4">
+                                <label for="password_confirm" class="form-label fw-semibold">
+                                    <i class="fas fa-lock me-2 text-success"></i>Confirmar Contraseña <span class="text-danger">*</span>
                                 </label>
-                                <div class="input-icon-wrapper">
-                                    <i class="fas fa-lock"></i>
+                                <div class="input-icon-wrapper position-relative">
                                     <input type="password" 
                                            class="form-control" 
                                            id="password_confirm" 
@@ -89,7 +92,7 @@
                                            placeholder="Repite tu nueva contraseña"
                                            required
                                            minlength="6">
-                                    <button type="button" class="btn btn-link toggle-password" tabindex="-1">
+                                    <button type="button" class="btn btn-link toggle-password position-absolute end-0 top-50 translate-middle-y" tabindex="-1">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
@@ -97,17 +100,17 @@
                             </div>
 
                             <!-- Botón de Actualizar -->
-                            <button type="submit" class="btn btn-primary" id="updateBtn">
-                                <i class="fas fa-key"></i>
+                            <button type="submit" class="btn btn-success w-100 mb-4" id="updateBtn">
+                                <i class="fas fa-key me-2"></i>
                                 Actualizar Contraseña
                             </button>
                         </form>
 
                         <!-- Footer -->
-                        <div class="auth-footer">
-                            <p>
-                                <a href="login">
-                                    <i class="fas fa-arrow-left"></i>
+                        <div class="auth-footer text-center">
+                            <p class="mb-0">
+                                <a href="../../public/login.php" class="text-success fw-semibold text-decoration-none">
+                                    <i class="fas fa-arrow-left me-2"></i>
                                     Volver al inicio de sesión
                                 </a>
                             </p>

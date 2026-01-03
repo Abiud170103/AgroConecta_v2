@@ -249,24 +249,22 @@ class AuthController extends BaseController {
         }
         
         if (empty($token)) {
-            $this->setFlashMessage('error', 'Token inválido');
-            $this->redirect('/login');
-            return;
+            SessionManager::setFlash('error', 'Token inválido');
+            header('Location: ../../public/login.php');
+            exit;
         }
         
         $userModel = new Usuario();
         $user = $userModel->verifyResetToken($token);
         
         if (!$user) {
-            $this->setFlashMessage('error', 'Token inválido o expirado');
-            $this->redirect('/auth/login');
-            return;
+            SessionManager::setFlash('error', 'Token inválido o expirado');
+            header('Location: ../../public/login.php');
+            exit;
         }
         
-        $this->setViewData('csrf_token', $this->generateCSRF());
-        $this->setViewData('pageTitle', 'Nueva Contraseña');
         $this->setViewData('token', $token);
-        $this->setViewData('error', $this->getFlashMessage('error'));
+        $this->setViewData('pageTitle', 'Nueva Contraseña');
         
         $this->render('auth/reset-password');
     }
@@ -276,11 +274,15 @@ class AuthController extends BaseController {
      */
     public function processResetPassword() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/login');
-            return;
+            header('Location: ../../public/login.php');
+            exit;
         }
         
-        if (!$this->validateCSRF()) return;
+        if (!SessionManager::validateCSRF($_POST['_token'] ?? '')) {
+            SessionManager::setFlash('error', 'Token de seguridad inválido');
+            header('Location: ../../public/login.php');
+            exit;
+        }
         
         $token = $_POST['token'] ?? '';
         $password = $_POST['password'] ?? '';
@@ -288,34 +290,49 @@ class AuthController extends BaseController {
         
         // Validaciones
         if (empty($password) || strlen($password) < 6) {
-            $this->setFlashMessage('error', 'La contraseña debe tener al menos 6 caracteres');
-            $this->redirect('/reset-password/' . $token);
-            return;
+            SessionManager::setFlash('error', 'La contraseña debe tener al menos 6 caracteres');
+            if (!empty($token)) {
+                header('Location: ../../public/reset-password.php?token=' . urlencode($token));
+            } else {
+                header('Location: ../../public/login.php');
+            }
+            exit;
         }
         
         if ($password !== $passwordConfirm) {
-            $this->setFlashMessage('error', 'Las contraseñas no coinciden');
-            $this->redirect('/reset-password/' . $token);
-            return;
+            SessionManager::setFlash('error', 'Las contraseñas no coinciden');
+            if (!empty($token)) {
+                header('Location: ../../public/reset-password.php?token=' . urlencode($token));
+            } else {
+                header('Location: ../../public/login.php');
+            }
+            exit;
         }
         
         $userModel = new Usuario();
         $user = $userModel->verifyResetToken($token);
         
         if (!$user) {
-            $this->setFlashMessage('error', 'Token inválido o expirado');
-            $this->redirect('/auth/login');
-            return;
+            SessionManager::setFlash('error', 'Token inválido o expirado');
+            header('Location: ../../public/login.php');
+            exit;
         }
         
         // Actualizar contraseña
         if ($userModel->updatePassword($user['id_usuario'], $password)) {
-            $this->logActivity('password_reset_success', "User ID: {$user['id_usuario']}");
-            $this->setFlashMessage('success', 'Contraseña actualizada correctamente');
-            $this->redirect('/login');
+            error_log("Password reset success - User ID: {$user['id_usuario']}");
+            SessionManager::setFlash('success', '¡Contraseña actualizada correctamente! Ya puedes iniciar sesión con tu nueva contraseña.');
+            header('Location: ../../public/login.php');
+            exit;
         } else {
-            $this->setFlashMessage('error', 'Error al actualizar la contraseña');
-            $this->redirect('/reset-password/' . $token);
+            error_log("Password reset failed - User ID: {$user['id_usuario']}");
+            SessionManager::setFlash('error', 'Error al actualizar la contraseña');
+            if (!empty($token)) {
+                header('Location: ../../public/reset-password.php?token=' . urlencode($token));
+            } else {
+                header('Location: ../../public/login.php');
+            }
+            exit;
         }
     }
     

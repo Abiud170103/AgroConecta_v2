@@ -61,10 +61,12 @@ require_once '../core/SessionManager.php';
             echo "<div class='success'>";
             echo "<strong>✅ Últimos tokens de reset en BD:</strong><br>";
             foreach ($results as $result) {
+                $resetUrl = "http://localhost/AgroConecta_v2/public/reset-password.php?token=" . urlencode($result['token_reset']);
                 echo "<p>";
                 echo "<strong>Email:</strong> " . htmlspecialchars($result['correo']) . "<br>";
                 echo "<strong>Token (16 chars):</strong> " . htmlspecialchars(substr($result['token_reset'], 0, 16)) . "...<br>";
-                echo "<strong>Fecha:</strong> " . htmlspecialchars($result['fecha_actualizacion']);
+                echo "<strong>Fecha:</strong> " . htmlspecialchars($result['fecha_actualizacion']) . "<br>";
+                echo "<strong>🔗 URL Reset:</strong> <a href='" . htmlspecialchars($resetUrl) . "' target='_blank'>Probar Reset</a>";
                 echo "</p><hr>";
             }
             echo "</div>";

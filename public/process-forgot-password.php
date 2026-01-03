@@ -62,6 +62,10 @@ try {
         error_log("Reset token generated successfully for: {$email}");
         error_log("Reset token (first 16 chars): " . substr($token, 0, 16) . "...");
         
+        // Generar URL de reset
+        $resetUrl = BASE_URL . "/reset-password.php?token=" . urlencode($token);
+        error_log("Password reset URL for {$email}: {$resetUrl}");
+        
         // Verificar que se guardó en la base de datos
         $verification = $userModel->findByEmail($email);
         if ($verification && !empty($verification['token_reset'])) {
