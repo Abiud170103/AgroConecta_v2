@@ -19,12 +19,18 @@ interface MiddlewareInterface {
  */
 class AuthMiddleware implements MiddlewareInterface {
     public function handle() {
-        session_start();
+        // SessionManager ya se inició en index.php
         
-        if (!isset($_SESSION['user_id'])) {
+        if (!SessionManager::isLoggedIn()) {
             // Guardar URL a la que quería acceder
             $_SESSION['intended_url'] = $_SERVER['REQUEST_URI'] ?? '/';
             
+            header('Location: /login');
+            exit;
+        }
+        
+        // Verificar timeout de sesión
+        if (!SessionManager::checkTimeout()) {
             header('Location: /login');
             exit;
         }
@@ -38,9 +44,9 @@ class AuthMiddleware implements MiddlewareInterface {
  */
 class GuestMiddleware implements MiddlewareInterface {
     public function handle() {
-        // session_start() ya se llamó en index.php
+        // SessionManager ya se inició en index.php
         
-        if (isset($_SESSION['user_id'])) {
+        if (SessionManager::isLoggedIn()) {
             header('Location: /dashboard');
             exit;
         }

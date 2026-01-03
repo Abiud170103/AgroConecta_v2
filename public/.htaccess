@@ -1,23 +1,11 @@
-# .htaccess para AgroConecta
-# Configuración de Apache para manejar URLs amigables
+# Configuración simple para carpeta public
+Options +Indexes
+DirectoryIndex index.php
 
-RewriteEngine On
-
-# Forzar HTTPS en producción (descomentaR en servidor con SSL)
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-# Remover www (opcional)
-# RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-# RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
-
-# Bloquear acceso directo a archivos sensibles
-<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql|conf|bak)$">
-    Order Allow,Deny
-    Deny from all
-</FilesMatch>
-
-# Bloquear acceso a directorios del sistema
+# Permitir acceso a todos los archivos
+<Files "*">
+    Require all granted
+</Files>
 RedirectMatch 403 ^/app/
 RedirectMatch 403 ^/config/
 RedirectMatch 403 ^/core/

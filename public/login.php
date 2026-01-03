@@ -1,3 +1,14 @@
+<?php
+require_once '../core/SessionManager.php';
+require_once '../core/Database.php';
+SessionManager::startSecureSession();
+
+// Si ya está logueado, redirigir
+if (SessionManager::isLoggedIn()) {
+    header('Location: ../index.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>

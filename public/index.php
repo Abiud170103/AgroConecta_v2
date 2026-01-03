@@ -28,14 +28,21 @@ if ($isDevelopment) {
     ini_set('log_errors', 1);
 }
 
-// Iniciar sesión
-session_start();
+// Cargar SessionManager
+require_once '../core/SessionManager.php';
+require_once '../core/Database.php';
+
+// Iniciar sesión segura
+SessionManager::startSecureSession();
 
 // Configurar headers de seguridad
 header('X-Frame-Options: DENY');
 header('X-XSS-Protection: 1; mode=block');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: strict-origin-when-cross-origin');
+if (!DEBUG) {
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+}
 
 // ============================================
 // AUTOLOAD Y DEPENDENCIAS
