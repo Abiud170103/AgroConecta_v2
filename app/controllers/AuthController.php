@@ -70,7 +70,9 @@ class AuthController extends BaseController {
         
         // Verificar si la cuenta está verificada (opcional)
         if (!$user['verificado']) {
-            $this->setFlashMessage('error', 'Debes verificar tu cuenta por email antes de continuar');
+            $errorMessage = 'Debes verificar tu cuenta por email antes de continuar';
+            $_SESSION['last_error'] = $errorMessage;
+            $this->setFlashMessage('error', $errorMessage);
             $this->redirect('/login');
             return;
         }
@@ -340,22 +342,54 @@ class AuthController extends BaseController {
      * Verifica email con token
      */
     public function verifyEmail($token = '') {
+        if ($this->isLoggedIn) {
+            $this->redirectToDashboard();
+            return;
+        }
+        
         if (empty($token)) {
-            $this->setFlashMessage('error', 'Token de verificación inválido');
-            $this->redirect('/auth/login');
+            $this->setViewData('verification_result', false);
+            $this->setViewData('error_message', 'Token de verificación inválido');
+            $this->render('auth/verify-email');
             return;
         }
         
         $userModel = new Usuario();
+        
+        // Buscar usuario con este token
+        $query = "SELECT * FROM Usuario WHERE token_verificacion = ? AND activo = 1";
+        $user = $userModel->db->selectOne($query, [$token]);
+        
+        if (!$user) {
+            $this->setViewData('verification_result', false);
+            $this->setViewData('error_message', 'Token de verificación inválido o expirado');
+            $this->render('auth/verify-email');
+            return;
+        }
+        
+        // Si ya está verificado
+        if ($user['verificado'] == 1) {
+            $this->setViewData('verification_result', true);
+            $this->setFlashMessage('info', 'Tu cuenta ya estaba verificada anteriormente');
+            $this->render('auth/verify-email');
+            return;
+        }
+        
+        // Procesar verificación
         $result = $userModel->verifyUser($token);
         
         if ($result) {
+            $this->setViewData('verification_result', true);
             $this->setFlashMessage('success', '¡Email verificado correctamente! Ya puedes iniciar sesión.');
+            $this->logActivity('email_verified', "User ID: {$user['id_usuario']}");
+            error_log("Email verification successful for user ID: " . $user['id_usuario']);
         } else {
-            $this->setFlashMessage('error', 'Token de verificación inválido o expirado');
+            $this->setViewData('verification_result', false);
+            $this->setViewData('error_message', 'Error al procesar la verificación. Inténtalo de nuevo.');
+            error_log("Email verification failed for token: " . substr($token, 0, 16));
         }
         
-        $this->redirect('/auth/login');
+        $this->render('auth/verify-email');
     }
     
     // MÉTODOS PRIVADOS

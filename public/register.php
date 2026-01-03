@@ -165,8 +165,8 @@ if (SessionManager::isLoggedIn()) {
                         <?php endif; ?>
 
                         <!-- Register Form -->
-                        <form class="auth-form" id="registerForm" action="/AgroConecta_v2/public/registro" method="POST">
-                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                        <form class="auth-form" id="registerForm" action="process-register.php" method="POST">
+                            <input type="hidden" name="csrf_token" value="<?= SessionManager::generateCSRF() ?>">
                             
                             <!-- Tipo de Usuario Toggle -->
                             <div class="user-type-toggle">

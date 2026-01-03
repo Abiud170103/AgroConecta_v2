@@ -154,6 +154,16 @@ if (SessionManager::isLoggedIn()) {
                         <div class="alert alert-danger">
                             <i class="fas fa-exclamation-circle"></i>
                             <?= htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+                            
+                            <!-- Mensaje especial para cuentas no verificadas -->
+                            <?php if(strpos($_SESSION['last_error'] ?? '', 'verificar tu cuenta') !== false): ?>
+                            <div class="mt-3">
+                                <a href="email-verification.php" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-envelope me-1"></i>
+                                    Reenviar Email de Verificación
+                                </a>
+                            </div>
+                            <?php unset($_SESSION['last_error']); endif; ?>
                         </div>
                         <?php endif; ?>
 
@@ -301,7 +311,7 @@ if (SessionManager::isLoggedIn()) {
                                 <p>"AgroConecta cambió mi forma de comprar alimentos. Productos frescos, precios justos y apoyo a productores locales. ¡Excelente!"</p>
                             </div>
                             <div class="testimonial-author">
-                                <img src="<?= asset('img/customers/testimonial1.jpg') ?>" alt="María González" class="author-image">
+                                <img src="img/customers/testimonial1.jpg" alt="María González" class="author-image">
                                 <div class="author-info">
                                     <h5>María González</h5>
                                     <p>Cliente desde 2023</p>
@@ -333,7 +343,7 @@ if (SessionManager::isLoggedIn()) {
                     </div>
 
                     <div class="benefits-image">
-                        <img src="<?= asset('img/auth/farmer-vegetables.jpg') ?>" 
+                        <img src="img/auth/farmer-vegetables.jpg" 
                              alt="Agricultor con vegetales frescos" 
                              class="img-fluid">
                         <div class="image-overlay">
@@ -436,16 +446,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Auto-fill demo data on double click (development only)
-    <?php if ($_ENV['APP_ENV'] === 'development'): ?>
-    document.getElementById('email').addEventListener('dblclick', function() {
-        fillDemoData('cliente');
-    });
-    <?php endif; ?>
 });
 </script>
 
-<?php 
-$content = ob_get_clean();
-include APP_PATH . '/views/layouts/main.php';
-?>
+</body>
+</html>
