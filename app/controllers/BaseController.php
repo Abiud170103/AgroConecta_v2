@@ -7,6 +7,8 @@
  * @version 1.0
  */
 
+require_once APP_PATH . '/core/Controller.php';
+
 class BaseController extends Controller {
     protected $currentUser = null;
     protected $isLoggedIn = false;

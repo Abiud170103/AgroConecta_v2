@@ -35,8 +35,10 @@ if (SessionManager::isLoggedIn()) {
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .navbar-brand img {
-            height: 40px;
+        .navbar-brand {
+            color: #2c3e50 !important;
+            text-decoration: none;
+            font-size: 1.25rem;
         }
         .navbar-custom .nav-link {
             color: #2c3e50 !important;
@@ -97,7 +99,7 @@ if (SessionManager::isLoggedIn()) {
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="../index.php">
-                <img src="img/logo.png" alt="AgroConecta" class="me-2">
+                <span style="font-size: 1.5rem; color: #28a745; margin-right: 8px;">🌱</span>
                 <span class="fw-bold text-success">AgroConecta</span>
             </a>
             
