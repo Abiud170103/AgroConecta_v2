@@ -6,6 +6,14 @@
  * @version 1.0
  */
 
+// Definir rutas principales solo si no están definidas
+if (!defined('ROOT_PATH')) {
+    define('ROOT_PATH', dirname(__DIR__));
+    define('APP_PATH', ROOT_PATH . '/app');
+    define('PUBLIC_PATH', ROOT_PATH . '/public');
+    define('CONFIG_PATH', ROOT_PATH . '/config');
+}
+
 // Configuración de la base de datos
 define('DB_HOST', '127.0.0.1');  // Cambiado de localhost
 define('DB_NAME', 'agroconecta_db');
@@ -19,7 +27,7 @@ define('ENVIRONMENT', 'development'); // development, testing, production
 define('DEBUG_MODE', true);
 
 // URLs y rutas
-define('SITE_URL', 'http://localhost/AgroConecta');
+define('SITE_URL', 'http://localhost/AgroConecta_v2');
 define('UPLOAD_PATH', PUBLIC_PATH . '/uploads/');
 define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
 

@@ -3,9 +3,9 @@ require_once '../core/SessionManager.php';
 require_once '../core/Database.php';
 SessionManager::startSecureSession();
 
-// Si ya está logueado, redirigir
+// Si ya está logueado, redirigir al dashboard
 if (SessionManager::isLoggedIn()) {
-    header('Location: ../index.php');
+    header('Location: dashboard.php');
     exit;
 }
 ?>
@@ -175,7 +175,7 @@ if (SessionManager::isLoggedIn()) {
                         <?php endif; ?>
 
                         <!-- Login Form -->
-                        <form class="auth-form" id="loginForm" action="/AgroConecta_v2/public/login" method="POST">
+                        <form class="auth-form" id="loginForm" action="process-login.php" method="POST">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             
                             <!-- Email -->

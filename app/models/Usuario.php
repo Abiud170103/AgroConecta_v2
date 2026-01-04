@@ -24,7 +24,11 @@ class Usuario extends Model {
         'activo',
         'verificado',
         'token_verificacion',
-        'token_reset'
+        'token_reset',
+        'direccion',
+        'ciudad',
+        'estado',
+        'codigo_postal'
     ];
     
     /**
