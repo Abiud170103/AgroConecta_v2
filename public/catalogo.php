@@ -1,52 +1,286 @@
 <?php
 /**
- * Catálogo de Productos - AgroConecta
- * Página pública del catálogo con filtros avanzados
+ * Catálogo de Productos - Clientes
  */
 
-require_once '../app/config/database.php';
-require_once '../app/models/Producto.php';
-require_once '../app/controllers/SessionManager.php';
+// Configuración básica
+if (ob_get_level()) ob_end_clean();
+ob_start();
 
-$productoModel = new Producto();
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache'); 
+header('Expires: 0');
 
-// Parámetros de búsqueda y filtros
+session_start();
+
+// Verificación de autenticación
+if (!isset($_SESSION['user_id']) || 
+    (!isset($_SESSION['user_tipo']) && !isset($_SESSION['tipo']))) {
+    ob_end_clean();
+    header('Location: login.php');
+    exit;
+}
+
+$user = [
+    'id' => $_SESSION['user_id'],
+    'nombre' => $_SESSION['user_nombre'] ?? $_SESSION['nombre'] ?? 'Usuario Test',
+    'correo' => $_SESSION['user_email'] ?? $_SESSION['correo'] ?? 'usuario@test.com',
+    'tipo' => $_SESSION['user_tipo'] ?? $_SESSION['tipo'] ?? 'cliente',
+    'tipo_usuario' => $_SESSION['user_tipo'] ?? $_SESSION['tipo'] ?? 'cliente'
+];
+
+// Verificar que sea cliente
+if ($user['tipo'] !== 'cliente') {
+    ob_end_clean();
+    header('Location: dashboard.php');
+    exit;
+}
+
+// Datos de ejemplo para productos del catálogo
+$productos = [
+    [
+        'id' => 1,
+        'nombre' => 'Tomates Cherry Orgánicos',
+        'descripcion' => 'Tomates cherry cultivados de forma orgánica, perfectos para ensaladas y snacks saludables',
+        'precio' => 45.50,
+        'precio_anterior' => 52.00,
+        'stock' => 25,
+        'categoria' => 'Verduras',
+        'vendedor' => 'Granja Verde SA',
+        'nombre_vendedor' => 'Granja Verde SA',
+        'imagen' => 'tomates-cherry.jpg',
+        'calificacion' => 4.8,
+        'reviews' => 24,
+        'origen' => 'Michoacán',
+        'ciudad' => 'Morelia',
+        'estado' => 'Michoacán',
+        'unidad_medida' => 'kg',
+        'organico' => true,
+        'descuento' => 12,
+        'tags' => ['Orgánico', 'Local', 'Fresco'],
+        'disponible' => true
+    ],
+    [
+        'id' => 2,
+        'nombre' => 'Lechugas Hidropónicas',
+        'descripcion' => 'Lechugas frescas cultivadas hidropónicamente, crujientes y llenas de sabor',
+        'precio' => 35.00,
+        'precio_anterior' => 0,
+        'stock' => 18,
+        'categoria' => 'Verduras',
+        'vendedor' => 'Hidropónicos del Norte',
+        'nombre_vendedor' => 'Hidropónicos del Norte',
+        'imagen' => 'lechugas.jpg',
+        'calificacion' => 4.6,
+        'reviews' => 18,
+        'origen' => 'Jalisco',
+        'ciudad' => 'Guadalajara',
+        'estado' => 'Jalisco',
+        'unidad_medida' => 'pza',
+        'organico' => false,
+        'descuento' => 0,
+        'tags' => ['Hidropónico', 'Crujiente'],
+        'disponible' => true
+    ],
+    [
+        'id' => 3,
+        'nombre' => 'Zanahorias Baby Premium',
+        'descripcion' => 'Zanahorias baby tiernas y dulces, perfectas para cocinar o comer crudas',
+        'precio' => 28.75,
+        'precio_anterior' => 32.00,
+        'stock' => 12,
+        'categoria' => 'Verduras',
+        'vendedor' => 'Productos Frescos Ltda',
+        'nombre_vendedor' => 'Productos Frescos Ltda',
+        'imagen' => 'zanahorias-baby.jpg',
+        'calificacion' => 4.7,
+        'reviews' => 31,
+        'origen' => 'Guanajuato',
+        'ciudad' => 'León',
+        'estado' => 'Guanajuato',
+        'unidad_medida' => 'kg',
+        'organico' => true,
+        'descuento' => 10,
+        'tags' => ['Orgánico', 'Premium', 'Dulce'],
+        'disponible' => true
+    ],
+    [
+        'id' => 4,
+        'nombre' => 'Espinacas Frescas',
+        'descripcion' => 'Espinacas tiernas y nutritivas, ricas en hierro y vitaminas',
+        'precio' => 38.50,
+        'precio_anterior' => 0,
+        'stock' => 8,
+        'categoria' => 'Verduras',
+        'vendedor' => 'Granja Verde SA',
+        'nombre_vendedor' => 'Granja Verde SA',
+        'imagen' => 'espinacas.jpg',
+        'calificacion' => 4.5,
+        'reviews' => 16,
+        'origen' => 'Puebla',
+        'ciudad' => 'Puebla',
+        'estado' => 'Puebla',
+        'unidad_medida' => 'manojo',
+        'organico' => true,
+        'descuento' => 0,
+        'tags' => ['Orgánico', 'Nutritivo', 'Fresco'],
+        'disponible' => true
+    ],
+    [
+        'id' => 5,
+        'nombre' => 'Brócoli Orgánico',
+        'descripcion' => 'Brócoli fresco y orgánico, rico en nutrientes y antioxidantes',
+        'precio' => 42.00,
+        'precio_anterior' => 48.00,
+        'stock' => 15,
+        'categoria' => 'Verduras',
+        'vendedor' => 'Eco Vegetales',
+        'nombre_vendedor' => 'Eco Vegetales',
+        'imagen' => 'brocoli.jpg',
+        'calificacion' => 4.9,
+        'reviews' => 22,
+        'origen' => 'Estado de México',
+        'ciudad' => 'Toluca',
+        'estado' => 'Estado de México',
+        'unidad_medida' => 'pza',
+        'organico' => true,
+        'descuento' => 12,
+        'tags' => ['Orgánico', 'Antioxidante', 'Premium'],
+        'disponible' => true
+    ],
+    [
+        'id' => 6,
+        'nombre' => 'Aguacates Hass',
+        'descripcion' => 'Aguacates Hass maduros, perfectos para guacamole y ensaladas',
+        'precio' => 65.00,
+        'precio_anterior' => 0,
+        'stock' => 20,
+        'categoria' => 'Frutas',
+        'vendedor' => 'Aguacates del Sur',
+        'nombre_vendedor' => 'Aguacates del Sur',
+        'imagen' => 'aguacates.jpg',
+        'calificacion' => 4.8,
+        'reviews' => 45,
+        'origen' => 'Michoacán',
+        'ciudad' => 'Uruapan',
+        'estado' => 'Michoacán',
+        'unidad_medida' => 'kg',
+        'organico' => false,
+        'descuento' => 0,
+        'tags' => ['Premium', 'Cremoso', 'Nutritivo'],
+        'disponible' => true
+    ]
+];
+
+// Inicializar variables necesarias
+$isLoggedIn = isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
+
+// Procesar filtros
 $filtros = [
     'busqueda' => $_GET['busqueda'] ?? '',
     'categoria' => $_GET['categoria'] ?? '',
     'ciudad' => $_GET['ciudad'] ?? '',
-    'estado' => $_GET['estado'] ?? '',
     'precio_min' => $_GET['precio_min'] ?? '',
     'precio_max' => $_GET['precio_max'] ?? '',
-    'orden' => $_GET['orden'] ?? 'fecha_desc',
-    'pagina' => max(1, (int)($_GET['pagina'] ?? 1))
+    'orden' => $_GET['orden'] ?? 'recientes',
+    'pagina' => max(1, intval($_GET['pagina'] ?? 1))
 ];
 
-$productosPorPagina = 12;
+// Aplicar filtros a los productos
+$productosFiltrados = $productos;
 
-try {
-    // Obtener productos con filtros aplicados
-    $resultado = $productoModel->obtenerProductosPaginados($filtros, $productosPorPagina);
-    $productos = $resultado['productos'];
-    $totalProductos = $resultado['total'];
-    $totalPaginas = ceil($totalProductos / $productosPorPagina);
-    
-    // Obtener datos para filtros
-    $categorias = $productoModel->obtenerCategorias();
-    $ubicaciones = $productoModel->obtenerUbicaciones();
-    
-} catch (Exception $e) {
-    error_log("Error en catálogo: " . $e->getMessage());
-    $productos = [];
-    $totalProductos = 0;
-    $totalPaginas = 0;
-    $categorias = [];
-    $ubicaciones = [];
+// Filtro por búsqueda
+if (!empty($filtros['busqueda'])) {
+    $productosFiltrados = array_filter($productosFiltrados, function($producto) use ($filtros) {
+        return stripos($producto['nombre'], $filtros['busqueda']) !== false ||
+               stripos($producto['descripcion'], $filtros['busqueda']) !== false ||
+               stripos($producto['vendedor'], $filtros['busqueda']) !== false;
+    });
 }
 
-// Obtener información del usuario si está logueado
-$user = SessionManager::getCurrentUser();
-$isLoggedIn = SessionManager::isLoggedIn();
+// Filtro por categoría
+if (!empty($filtros['categoria'])) {
+    $productosFiltrados = array_filter($productosFiltrados, function($producto) use ($filtros) {
+        return $producto['categoria'] === $filtros['categoria'];
+    });
+}
+
+// Filtro por precio
+if (!empty($filtros['precio_min'])) {
+    $productosFiltrados = array_filter($productosFiltrados, function($producto) use ($filtros) {
+        return $producto['precio'] >= floatval($filtros['precio_min']);
+    });
+}
+
+if (!empty($filtros['precio_max'])) {
+    $productosFiltrados = array_filter($productosFiltrados, function($producto) use ($filtros) {
+        return $producto['precio'] <= floatval($filtros['precio_max']);
+    });
+}
+
+// Ordenar productos
+switch ($filtros['orden']) {
+    case 'precio_asc':
+        usort($productosFiltrados, function($a, $b) {
+            return $a['precio'] <=> $b['precio'];
+        });
+        break;
+    case 'precio_desc':
+        usort($productosFiltrados, function($a, $b) {
+            return $b['precio'] <=> $a['precio'];
+        });
+        break;
+    case 'popularidad':
+        usort($productosFiltrados, function($a, $b) {
+            return ($b['calificacion'] * $b['reviews']) <=> ($a['calificacion'] * $a['reviews']);
+        });
+        break;
+    case 'calificacion':
+        usort($productosFiltrados, function($a, $b) {
+            return $b['calificacion'] <=> $a['calificacion'];
+        });
+        break;
+    default: // recientes
+        // Mantener orden original
+        break;
+}
+
+$totalProductos = count($productosFiltrados);
+
+// Paginación
+$productosPorPagina = 12;
+$paginaActual = $filtros['pagina'];
+$totalPaginas = ceil($totalProductos / $productosPorPagina);
+$offset = ($paginaActual - 1) * $productosPorPagina;
+
+$productosPaginados = array_slice($productosFiltrados, $offset, $productosPorPagina);
+
+// Agregar campos faltantes a los productos
+foreach ($productosPaginados as &$producto) {
+    if (!isset($producto['unidad_medida'])) {
+        $producto['unidad_medida'] = 'kg';
+    }
+    if (!isset($producto['ciudad'])) {
+        $ciudades = ['Guadalajara', 'Monterrey', 'Puebla', 'Querétaro', 'Morelia', 'Toluca'];
+        $producto['ciudad'] = $ciudades[array_rand($ciudades)];
+    }
+    if (!isset($producto['estado'])) {
+        $estados = ['Jalisco', 'Nuevo León', 'Puebla', 'Querétaro', 'Michoacán', 'Estado de México'];
+        $producto['estado'] = $estados[array_rand($estados)];
+    }
+    if (!isset($producto['nombre_vendedor'])) {
+        $producto['nombre_vendedor'] = $producto['vendedor'];
+    }
+}
+
+// Función helper para construir URLs de paginación
+function buildPaginationUrl($page) {
+    $params = $_GET;
+    $params['pagina'] = $page;
+    return 'catalogo.php?' . http_build_query($params);
+}
+
+ob_end_clean();
 ?>
 
 <!DOCTYPE html>
@@ -646,7 +880,7 @@ $isLoggedIn = SessionManager::isLoggedIn();
                     </div>
                 <?php else: ?>
                     <div class="product-grid">
-                        <?php foreach ($productos as $producto): ?>
+                        <?php foreach ($productosPaginados as $producto): ?>
                             <div class="product-card">
                                 <div class="product-image">
                                     <?php
@@ -696,12 +930,12 @@ $isLoggedIn = SessionManager::isLoggedIn();
                                     <?php if ($isLoggedIn && $user['tipo_usuario'] === 'cliente'): ?>
                                         <div class="product-actions">
                                             <button class="btn btn-cart" 
-                                                    onclick="agregarAlCarrito(<?= $producto['id_producto'] ?>)">
+                                                    onclick="agregarAlCarrito(<?= $producto['id'] ?>)">
                                                 <i class="fas fa-cart-plus me-2"></i>
                                                 Agregar al Carrito
                                             </button>
                                             <button class="btn btn-favorite" 
-                                                    onclick="toggleFavorito(<?= $producto['id_producto'] ?>)">
+                                                    onclick="toggleFavorito(<?= $producto['id'] ?>)">
                                                 <i class="fas fa-heart"></i>
                                             </button>
                                         </div>
@@ -855,7 +1089,7 @@ $isLoggedIn = SessionManager::isLoggedIn();
                 },
                 body: JSON.stringify({
                     action: 'agregar',
-                    id_producto: idProducto,
+                    id: idProducto,
                     cantidad: 1
                 })
             })
@@ -883,7 +1117,7 @@ $isLoggedIn = SessionManager::isLoggedIn();
                 },
                 body: JSON.stringify({
                     action: 'toggle',
-                    id_producto: idProducto
+                    id: idProducto
                 })
             })
             .then(response => response.json())
@@ -938,12 +1172,3 @@ $isLoggedIn = SessionManager::isLoggedIn();
     </script>
 </body>
 </html>
-
-<?php
-// Función helper para construir URLs de paginación
-function buildPaginationUrl($page) {
-    $params = $_GET;
-    $params['pagina'] = $page;
-    return 'catalogo.php?' . http_build_query($params);
-}
-?>

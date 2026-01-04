@@ -283,30 +283,36 @@ ob_end_clean();
                                 <i class="fas fa-warehouse me-2"></i> Inventario
                             </a>
                         <?php elseif ($user['tipo'] === 'cliente'): ?>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="catalogo.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-store me-2"></i> Catálogo
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action">
-                                <i class="fas fa-shopping-basket me-2"></i> Mi Carrito
+                            <a href="carrito.php" class="list-group-item list-group-item-action">
+                                <i class="fas fa-shopping-cart me-2"></i> Mi Carrito
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="mis-pedidos.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-receipt me-2"></i> Mis Pedidos
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="favoritos.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-heart me-2"></i> Favoritos
                             </a>
                             <a href="#" class="list-group-item list-group-item-action">
                                 <i class="fas fa-map-marker-alt me-2"></i> Direcciones
                             </a>
                         <?php elseif ($user['tipo'] === 'admin'): ?>
-                            <a href="#" class="list-group-item list-group-item-action">
-                                <i class="fas fa-users-cog me-2"></i> Usuarios
+                            <a href="usuarios.php" class="list-group-item list-group-item-action">
+                                <i class="fas fa-users me-2"></i> Gestión de Usuarios
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="vendedores.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-store-alt me-2"></i> Vendedores
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="productos-admin.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-boxes me-2"></i> Productos
+                            </a>
+                            <a href="reportes.php" class="list-group-item list-group-item-action">
+                                <i class="fas fa-chart-bar me-2"></i> Reportes
+                            </a>
+                            <a href="configuracion.php" class="list-group-item list-group-item-action">
+                                <i class="fas fa-cogs me-2"></i> Configuración
                             </a>
                             <a href="#" class="list-group-item list-group-item-action">
                                 <i class="fas fa-chart-bar me-2"></i> Reportes
@@ -549,53 +555,69 @@ ob_end_clean();
                                             </div>
                                         </div>
                                     <?php elseif ($user['tipo'] === 'cliente'): ?>
-                                        <div class="col-lg-4 col-md-6 mb-3">
+                                        <div class="col-lg-3 col-md-6 mb-3">
                                             <div class="d-grid">
-                                                <button class="btn btn-success btn-lg">
-                                                    <i class="fas fa-search me-2"></i>
+                                                <a href="catalogo.php" class="btn btn-success btn-lg text-decoration-none">
+                                                    <i class="fas fa-store me-2"></i>
                                                     Explorar Catálogo
-                                                </button>
+                                                </a>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 mb-3">
+                                        <div class="col-lg-3 col-md-6 mb-3">
                                             <div class="d-grid">
-                                                <button class="btn btn-primary btn-lg">
+                                                <a href="carrito.php" class="btn btn-primary btn-lg text-decoration-none">
                                                     <i class="fas fa-shopping-cart me-2"></i>
-                                                    Ver Carrito
-                                                </button>
+                                                    Mi Carrito
+                                                </a>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 mb-3">
+                                        <div class="col-lg-3 col-md-6 mb-3">
                                             <div class="d-grid">
-                                                <button class="btn btn-info btn-lg">
-                                                    <i class="fas fa-history me-2"></i>
+                                                <a href="mis-pedidos.php" class="btn btn-info btn-lg text-decoration-none">
+                                                    <i class="fas fa-receipt me-2"></i>
                                                     Mis Pedidos
-                                                </button>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 mb-3">
+                                            <div class="d-grid">
+                                                <a href="favoritos.php" class="btn btn-danger btn-lg text-decoration-none">
+                                                    <i class="fas fa-heart me-2"></i>
+                                                    Favoritos
+                                                </a>
                                             </div>
                                         </div>
                                     <?php elseif ($user['tipo'] === 'admin'): ?>
-                                        <div class="col-lg-4 col-md-6 mb-3">
+                                        <div class="col-lg-3 col-md-6 mb-3">
                                             <div class="d-grid">
-                                                <button class="btn btn-dark btn-lg">
-                                                    <i class="fas fa-users-cog me-2"></i>
+                                                <a href="usuarios.php" class="btn btn-dark btn-lg text-decoration-none">
+                                                    <i class="fas fa-users me-2"></i>
                                                     Gestión Usuarios
-                                                </button>
+                                                </a>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 mb-3">
+                                        <div class="col-lg-3 col-md-6 mb-3">
                                             <div class="d-grid">
-                                                <button class="btn btn-secondary btn-lg">
-                                                    <i class="fas fa-server me-2"></i>
-                                                    Supervisar Sistema
-                                                </button>
+                                                <a href="vendedores.php" class="btn btn-secondary btn-lg text-decoration-none">
+                                                    <i class="fas fa-store me-2"></i>
+                                                    Supervisar Vendedores
+                                                </a>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 mb-3">
+                                        <div class="col-lg-3 col-md-6 mb-3">
                                             <div class="d-grid">
-                                                <button class="btn btn-warning btn-lg">
-                                                    <i class="fas fa-file-alt me-2"></i>
+                                                <a href="reportes.php" class="btn btn-warning btn-lg text-decoration-none">
+                                                    <i class="fas fa-chart-bar me-2"></i>
                                                     Generar Reportes
-                                                </button>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 mb-3">
+                                            <div class="d-grid">
+                                                <a href="configuracion.php" class="btn btn-info btn-lg text-decoration-none">
+                                                    <i class="fas fa-cogs me-2"></i>
+                                                    Configuración
+                                                </a>
                                             </div>
                                         </div>
                                     <?php endif; ?>
