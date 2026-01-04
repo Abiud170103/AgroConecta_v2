@@ -219,7 +219,7 @@ if (isset($_GET['page'])) {
                     </div>
                 </div>
                 <div class="col-lg-6 text-center">
-                    <img src="public/img/hero-farm.png" alt="Agricultura" class="img-fluid" style="max-height: 400px;">
+                    <img src="public/img/Agricultura.jpg" alt="Agricultura" class="img-fluid rounded-3 shadow" style="max-height: 400px;">
                 </div>
             </div>
         </div>
