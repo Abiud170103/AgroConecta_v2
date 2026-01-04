@@ -1,31 +1,52 @@
 <?php
 /**
- * Dashboard Principal - AgroConecta
- * Dashboard embebido sin includes externos problemáticos
+ * Dashboard Principal - AgroConecta (Versión Híbrida Estable)
+ * Usa la lógica exitosa del dashboard híbrido
  */
 
-require_once '../config/database.php';
-require_once '../core/Database.php';
-require_once '../core/SessionManager.php';
-require_once '../app/models/Model.php';
-require_once '../app/models/Usuario.php';
-require_once '../app/models/Producto.php';
-require_once '../app/models/Pedido.php';
-require_once '../app/controllers/DashboardController.php';
+// Prevenir cualquier output
+if (ob_get_level()) ob_end_clean();
+ob_start();
 
-// Verificar autenticación
-if (!SessionManager::isLoggedIn()) {
-    SessionManager::setFlash('error', 'Debes iniciar sesión para acceder al dashboard');
+// Headers anti-cache primero
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache'); 
+header('Expires: 0');
+
+// Iniciar sesión BÁSICA primero
+session_start();
+
+// Verificación básica SIN SessionManager (estable)
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_tipo'])) {
+    ob_end_clean();
     header('Location: login.php');
     exit;
 }
 
-$user = SessionManager::getUserData();
-$dashboardController = new DashboardController();
+// Datos básicos de sesión
+$user_basic = [
+    'id' => $_SESSION['user_id'],
+    'nombre' => $_SESSION['user_nombre'] ?? 'Usuario',
+    'correo' => $_SESSION['user_email'] ?? '',
+    'tipo' => $_SESSION['user_tipo'] ?? 'general'
+];
 
-// Obtener datos según tipo de usuario
+// Cargar dependencias DESPUÉS de verificación exitosa
+$dashboardData = [];
 try {
-    switch ($user['tipo']) {
+    require_once '../config/database.php';
+    require_once '../core/Database.php';
+    require_once '../core/SessionManager.php';
+    require_once '../app/models/Model.php';
+    require_once '../app/models/Usuario.php';
+    require_once '../app/models/Producto.php';
+    require_once '../app/models/Pedido.php';
+    require_once '../app/controllers/DashboardController.php';
+    
+    $dashboardController = new DashboardController();
+    
+    // Obtener datos según tipo de usuario
+    switch ($user_basic['tipo']) {
         case 'vendedor':
             $dashboardData = $dashboardController->dashboardVendedor();
             break;
@@ -36,25 +57,39 @@ try {
             $dashboardData = $dashboardController->dashboardAdmin();
             break;
         default:
-            SessionManager::setFlash('error', 'Tipo de usuario no válido');
-            header('Location: login.php');
-            exit;
+            $dashboardData = [
+                'user' => $user_basic,
+                'statsProductos' => ['total_productos' => 0],
+                'statsPedidos' => ['total_pedidos' => 0, 'total_ventas' => 0]
+            ];
     }
-} catch (Exception $e) {
-    // Log del error para debug
-    error_log("Error en dashboard: " . $e->getMessage() . " en " . $e->getFile() . ":" . $e->getLine());
     
-    // En lugar de redirigir, usar datos por defecto
+    $user = $dashboardData['user'] ?? $user_basic;
+    
+} catch (Exception $e) {
+    error_log("Dashboard error: " . $e->getMessage());
+    
+    $user = $user_basic;
     $dashboardData = [
+        'user' => $user_basic,
+        'statsProductos' => [
+            'total_productos' => 0,
+            'productos_disponibles' => 0,
+            'precio_promedio' => 0
+        ],
+        'statsPedidos' => [
+            'total_pedidos' => 0,
+            'pedidos_pendientes' => 0,
+            'total_ventas' => 0,
+            'ingresos_totales' => 0
+        ],
         'productos' => [],
-        'pedidos' => [],
-        'ventas_mes' => 0,
-        'total_productos' => 0,
-        'total_pedidos' => 0,
-        'total_ventas' => 0,
-        'pedidos_pendientes' => 0
+        'pedidos' => []
     ];
 }
+
+// Limpiar buffer antes del HTML
+ob_end_clean();
 ?>
 <!DOCTYPE html>
 <html lang="es">

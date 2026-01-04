@@ -11,9 +11,10 @@ RedirectMatch 403 ^/config/
 RedirectMatch 403 ^/core/
 RedirectMatch 403 ^/storage/
 
-# Redirigir todas las solicitudes al index.php
+# Redirigir todas las solicitudes al index.php EXCEPTO archivos específicos
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/(dashboard|login|logout|register|dashboard-simple|debug-|process-login)\.php$
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Headers de seguridad
