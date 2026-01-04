@@ -267,19 +267,19 @@ ob_end_clean();
                         </a>
                         
                         <?php if ($user['tipo'] === 'vendedor'): ?>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="productos.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-box me-2"></i> Productos
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="pedidos.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-shopping-cart me-2"></i> Pedidos
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="ventas.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-chart-line me-2"></i> Ventas
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="clientes.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-users me-2"></i> Clientes
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="inventario.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-warehouse me-2"></i> Inventario
                             </a>
                         <?php elseif ($user['tipo'] === 'cliente'): ?>
@@ -526,26 +526,26 @@ ob_end_clean();
                                     <?php if ($user['tipo'] === 'vendedor'): ?>
                                         <div class="col-lg-4 col-md-6 mb-3">
                                             <div class="d-grid">
-                                                <button class="btn btn-primary btn-lg">
+                                                <a href="productos.php" class="btn btn-primary btn-lg text-decoration-none">
                                                     <i class="fas fa-plus-circle me-2"></i>
                                                     Agregar Producto
-                                                </button>
+                                                </a>
                                             </div>
                                         </div>
                                         <div class="col-lg-4 col-md-6 mb-3">
                                             <div class="d-grid">
-                                                <button class="btn btn-success btn-lg">
+                                                <a href="ventas.php" class="btn btn-success btn-lg text-decoration-none">
                                                     <i class="fas fa-chart-bar me-2"></i>
                                                     Ver Ventas
-                                                </button>
+                                                </a>
                                             </div>
                                         </div>
                                         <div class="col-lg-4 col-md-6 mb-3">
                                             <div class="d-grid">
-                                                <button class="btn btn-info btn-lg">
+                                                <a href="pedidos.php" class="btn btn-info btn-lg text-decoration-none">
                                                     <i class="fas fa-tasks me-2"></i>
                                                     Gestionar Pedidos
-                                                </button>
+                                                </a>
                                             </div>
                                         </div>
                                     <?php elseif ($user['tipo'] === 'cliente'): ?>
