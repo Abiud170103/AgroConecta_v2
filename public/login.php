@@ -92,6 +92,27 @@ if (SessionManager::isLoggedIn()) {
                 transform: translateY(0);
             }
         }
+        
+        /* Forzar visibilidad del texto */
+        .auth-container label,
+        .auth-container p,
+        .auth-container span,
+        .form-check-label,
+        .auth-footer p {
+            color: #2c3e50 !important;
+        }
+        
+        .auth-subtitle {
+            color: #6c757d !important;
+        }
+        
+        .forgot-password-link {
+            color: #28a745 !important;
+        }
+        
+        .form-control::placeholder {
+            color: #9ca3af !important;
+        }
     </style>
 </head>
 <body>

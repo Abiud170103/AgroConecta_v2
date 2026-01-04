@@ -92,6 +92,28 @@ if (SessionManager::isLoggedIn()) {
                 transform: translateY(0);
             }
         }
+        
+        /* Forzar visibilidad del texto */
+        .auth-container label,
+        .auth-container p,
+        .auth-container span,
+        .form-check-label,
+        .auth-footer p,
+        .user-type-label {
+            color: #2c3e50 !important;
+        }
+        
+        .auth-subtitle {
+            color: #6c757d !important;
+        }
+        
+        .form-control::placeholder {
+            color: #9ca3af !important;
+        }
+        
+        .text-muted {
+            color: #6c757d !important;
+        }
     </style>
 </head>
 <body>

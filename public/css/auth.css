@@ -79,7 +79,7 @@
 
 .auth-subtitle {
     font-size: 0.95rem;
-    color: #6c757d;
+    color: #6c757d !important;
     margin: 0;
     line-height: 1.5;
 }
@@ -97,7 +97,7 @@
 .form-group label {
     display: block;
     font-weight: 600;
-    color: #2c3e50;
+    color: #2c3e50 !important;
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
 }
@@ -196,7 +196,7 @@
 
 .form-check-label {
     font-size: 0.9rem;
-    color: #6c757d;
+    color: #6c757d !important;
     cursor: pointer;
     margin: 0;
 }
@@ -273,7 +273,7 @@
 }
 
 .auth-footer p {
-    color: #6c757d;
+    color: #6c757d !important;
     font-size: 0.95rem;
     margin: 0;
 }
@@ -472,6 +472,32 @@
     to {
         transform: translateY(-50%) rotate(360deg);
     }
+}
+
+/* === RESPONSIVE === */
+
+/* === ESTILOS ADICIONALES PARA VISIBILIDAD === */
+.auth-container * {
+    color: inherit;
+}
+
+.auth-container p,
+.auth-container span,
+.auth-container div:not(.btn):not(.form-control):not(.alert) {
+    color: #495057;
+}
+
+.auth-container .text-muted {
+    color: #6c757d !important;
+}
+
+.auth-container .form-text {
+    color: #6c757d !important;
+}
+
+/* Asegurar que los placeholders sean visibles */
+.form-control::placeholder {
+    color: #9ca3af !important;
 }
 
 /* === RESPONSIVE === */
