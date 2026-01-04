@@ -1,7 +1,7 @@
 <?php
 /**
- * Dashboard Principal - AgroConecta
- * Dashboard embebido sin includes externos problemáticos
+ * Dashboard Alternativo - Sin includes de vistas
+ * AgroConecta - Dashboard embebido sin archivos separados
  */
 
 require_once '../config/database.php';
@@ -41,19 +41,10 @@ try {
             exit;
     }
 } catch (Exception $e) {
-    // Log del error para debug
-    error_log("Error en dashboard: " . $e->getMessage() . " en " . $e->getFile() . ":" . $e->getLine());
-    
-    // En lugar de redirigir, usar datos por defecto
-    $dashboardData = [
-        'productos' => [],
-        'pedidos' => [],
-        'ventas_mes' => 0,
-        'total_productos' => 0,
-        'total_pedidos' => 0,
-        'total_ventas' => 0,
-        'pedidos_pendientes' => 0
-    ];
+    error_log("Error en dashboard: " . $e->getMessage());
+    SessionManager::setFlash('error', 'Error al cargar el dashboard');
+    header('Location: index.php');
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -61,9 +52,6 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>Dashboard - AgroConecta</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
@@ -341,7 +329,7 @@ try {
                                 <div class="mt-4">
                                     <small class="text-muted">
                                         <i class="bi bi-shield-check"></i> 
-                                        Dashboard funcionando sin bucles de redirección
+                                        Dashboard alternativo sin includes externos - Funcionando sin bucles de redirección
                                     </small>
                                 </div>
                             </div>

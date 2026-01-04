@@ -5,7 +5,7 @@
  */
 
 // Verificar autenticación
-if (!SessionManager::isLoggedIn() || $user['tipo_usuario'] !== 'cliente') {
+if (!SessionManager::isLoggedIn() || $user['tipo'] !== 'cliente') {
     header('Location: ../../public/login.php');
     exit;
 }

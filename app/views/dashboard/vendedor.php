@@ -5,7 +5,7 @@
  */
 
 // Verificar autenticación
-if (!SessionManager::isLoggedIn() || $user['tipo_usuario'] !== 'vendedor') {
+if (!SessionManager::isLoggedIn() || $user['tipo'] !== 'vendedor') {
     header('Location: ../../public/login.php');
     exit;
 }

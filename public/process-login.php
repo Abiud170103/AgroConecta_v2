@@ -43,7 +43,7 @@ try {
             'id' => $user['id_usuario'],
             'correo' => $user['correo'], 
             'nombre' => $user['nombre'],
-            'tipo_usuario' => $user['tipo_usuario']
+            'tipo' => $user['tipo_usuario']  // Mapear tipo_usuario a tipo
         ];
         
         SessionManager::setUserData($userData);

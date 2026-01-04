@@ -5,7 +5,7 @@
  */
 
 // Verificar autenticación y permisos de admin
-if (!SessionManager::isLoggedIn() || $user['tipo_usuario'] !== 'admin') {
+if (!SessionManager::isLoggedIn() || $user['tipo'] !== 'admin') {
     header('Location: ../../public/login.php');
     exit;
 }

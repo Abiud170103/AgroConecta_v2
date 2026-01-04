@@ -45,7 +45,14 @@ class SessionManager {
         $_SESSION['user_id'] = $userData['id'];
         $_SESSION['user_email'] = $userData['correo'];
         $_SESSION['user_nombre'] = $userData['nombre'];
-        $_SESSION['user_tipo'] = $userData['tipo_usuario'];
+        
+        // Manejar tanto 'tipo' como 'tipo_usuario' para compatibilidad
+        if (isset($userData['tipo'])) {
+            $_SESSION['user_tipo'] = $userData['tipo'];
+        } elseif (isset($userData['tipo_usuario'])) {
+            $_SESSION['user_tipo'] = $userData['tipo_usuario'];
+        }
+        
         $_SESSION['login_time'] = time();
     }
     
@@ -59,7 +66,7 @@ class SessionManager {
         
         return [
             'id' => $_SESSION['user_id'],
-            'email' => $_SESSION['user_email'],
+            'correo' => $_SESSION['user_email'],  // Usar 'correo' para consistencia
             'nombre' => $_SESSION['user_nombre'],
             'tipo' => $_SESSION['user_tipo'],
             'login_time' => $_SESSION['login_time']
