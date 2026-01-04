@@ -59,4 +59,44 @@ date_default_timezone_set(DEFAULT_TIMEZONE);
 
 // Configurar locale para México
 setlocale(LC_ALL, 'es_MX.UTF-8');
+
+/**
+ * Función para obtener conexión a la base de datos
+ * @return PDO Instancia de conexión PDO
+ * @throws Exception Si no se puede conectar
+ */
+function getDBConnection() {
+    static $pdo = null;
+    
+    if ($pdo === null) {
+        try {
+            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES " . DB_CHARSET . " COLLATE " . DB_COLLATION
+            ];
+            
+            $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+            
+            if (DEBUG_MODE) {
+                error_log("Conexión a BD establecida correctamente");
+            }
+        } catch (PDOException $e) {
+            error_log("Error de conexión a BD: " . $e->getMessage());
+            throw new Exception("Error de conexión a la base de datos");
+        }
+    }
+    
+    return $pdo;
+}
+
+/**
+ * Función alternativa para obtener conexión (alias)
+ * @return PDO
+ */
+function db() {
+    return getDBConnection();
+}
 ?>

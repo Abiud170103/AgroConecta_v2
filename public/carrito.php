@@ -364,6 +364,27 @@ ob_end_clean();
 
     <!-- Main Content -->
     <div class="container mt-4">
+        <?php if (isset($_GET['debug']) && isset($_SESSION['debug_message'])): ?>
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Debug:</strong> <?php echo htmlspecialchars($_SESSION['debug_message']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php unset($_SESSION['debug_message']); endif; ?>
+        
+        <?php if (isset($_GET['mensaje'])): ?>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <?php 
+            if ($_GET['mensaje'] === 'carrito_vacio') {
+                echo 'Tu carrito está vacío. <a href="catalogo.php" class="alert-link">¡Empieza a comprar aquí!</a>';
+                echo '<br><small>Si crees que esto es un error, puedes <a href="agregar-carrito-prueba.php" class="alert-link">agregar items de prueba</a> o <a href="debug-carrito.php" class="alert-link">ver información de debug</a>.</small>';
+            }
+            ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php endif; ?>
+        
         <!-- Page Header -->
         <div class="row mb-4">
             <div class="col-12">
@@ -749,16 +770,20 @@ ob_end_clean();
         }
 
         function procederAlPago() {
+            console.log('Función procederAlPago ejecutada');
+            console.log('Carrito datos:', carritoData);
+            
             if (carritoData.length === 0) {
                 showNotification('Tu carrito está vacío', 'warning');
                 return;
             }
             
-            // Aquí se redirigiría a la página de pago
-            showNotification('Redirigiendo al proceso de pago...', 'info');
+            // Redireccionar a la página de confirmación de compra
+            showNotification('Redirigiendo a confirmación de compra...', 'info');
+            console.log('Redirigiendo a confirmacion-compra.php');
             setTimeout(() => {
-                alert('Funcionalidad de pago en desarrollo');
-            }, 1500);
+                window.location.href = 'confirmacion-compra.php';
+            }, 1000);
         }
 
         // Event listeners para opciones de envío
