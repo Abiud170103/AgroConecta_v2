@@ -356,10 +356,7 @@ ob_end_clean();
                             <a href="configuracion.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-cogs me-2"></i> Configuración
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action">
-                                <i class="fas fa-chart-bar me-2"></i> Reportes
-                            </a>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="sistema.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-server me-2"></i> Sistema
                             </a>
                         <?php endif; ?>
