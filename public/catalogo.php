@@ -536,7 +536,7 @@ ob_end_clean();
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
+            <a class="navbar-brand" href="dashboard.php">
                 <span>🌱</span>
                 AgroConecta
             </a>

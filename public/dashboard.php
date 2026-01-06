@@ -12,33 +12,78 @@ header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache'); 
 header('Expires: 0');
 
-// Iniciar sesión BÁSICA primero
-session_start();
+// Incluir dependencias
+require_once '../config/database.php';
+require_once '../core/Database.php';
+require_once '../core/SessionManager.php';
 
-// Verificación básica SIN dependencias externas (estable)
-if (!isset($_SESSION['user_id']) || 
-    (!isset($_SESSION['user_tipo']) && !isset($_SESSION['tipo']))) {
+SessionManager::startSecureSession();
+
+// Verificación con SessionManager
+if (!SessionManager::isLoggedIn()) {
     ob_end_clean();
     header('Location: login.php');
     exit;
 }
 
-// Datos básicos de sesión con múltiples formatos
+// Obtener datos del usuario
+$userData = SessionManager::getUserData();
 $user = [
-    'id' => $_SESSION['user_id'],
-    'nombre' => $_SESSION['user_nombre'] ?? $_SESSION['nombre'] ?? 'Usuario Test',
-    'correo' => $_SESSION['user_email'] ?? $_SESSION['correo'] ?? 'usuario@test.com',
-    'tipo' => $_SESSION['user_tipo'] ?? $_SESSION['tipo'] ?? 'cliente'
+    'id' => $userData['id'] ?? $_SESSION['user_id'],
+    'nombre' => $userData['nombre'] ?? $_SESSION['user_nombre'] ?? 'Usuario',
+    'correo' => $userData['correo'] ?? $_SESSION['user_email'] ?? 'usuario@test.com',
+    'tipo' => $userData['tipo'] ?? $_SESSION['user_tipo'] ?? 'cliente'
 ];
 
-// Datos de ejemplo para las estadísticas (sin cargar base de datos)
-$dashboardData = [
-    'statsProductos' => ['total_productos' => 15],
-    'statsVentas' => ['total_ventas' => 25, 'pendientes' => 3],
-    'statsClientes' => ['activos' => 12],
-    'statsPedidos' => ['total_pedidos' => 8],
-    'statsGenerales' => ['ingresos_totales' => 2500]
-];
+// Obtener estadísticas reales de la base de datos
+try {
+    $db = Database::getInstance();
+    $pdo = $db->getConnection();
+    
+    // Estadísticas para clientes
+    if ($user['tipo'] === 'cliente') {
+        // Contar productos en carrito
+        $stmt = $pdo->prepare("SELECT COUNT(*) as items FROM carrito WHERE id_usuario = ?");
+        $stmt->execute([$user['id']]);
+        $carrito_items = $stmt->fetch()['items'] ?? 0;
+        
+        // Contar favoritos
+        $stmt = $pdo->prepare("SELECT COUNT(*) as favoritos FROM favorito WHERE id_usuario = ?");
+        $stmt->execute([$user['id']]);
+        $total_favoritos = $stmt->fetch()['favoritos'] ?? 0;
+        
+        // Contar pedidos
+        $stmt = $pdo->prepare("SELECT COUNT(*) as pedidos FROM pedido WHERE id_cliente = ?");
+        $stmt->execute([$user['id']]);
+        $total_pedidos = $stmt->fetch()['pedidos'] ?? 0;
+        
+        $dashboardData = [
+            'carrito_items' => $carrito_items,
+            'total_favoritos' => $total_favoritos,
+            'total_pedidos' => $total_pedidos,
+            'statsGenerales' => ['tipo' => 'cliente']
+        ];
+    } else {
+        // Estadísticas para vendedores/admin (mantener lógica anterior)
+        $dashboardData = [
+            'statsProductos' => ['total_productos' => 15],
+            'statsVentas' => ['total_ventas' => 25, 'pendientes' => 3],
+            'statsClientes' => ['activos' => 12],
+            'statsPedidos' => ['total_pedidos' => 8],
+            'statsGenerales' => ['ingresos_totales' => 2500]
+        ];
+    }
+    
+} catch (Exception $e) {
+    error_log("Error en dashboard: " . $e->getMessage());
+    // Datos de respaldo
+    $dashboardData = [
+        'carrito_items' => 0,
+        'total_favoritos' => 0,
+        'total_pedidos' => 0,
+        'statsGenerales' => ['tipo' => $user['tipo']]
+    ];
+}
 
 // Limpiar buffer de salida antes de enviar HTML
 ob_end_clean();
@@ -356,7 +401,7 @@ ob_end_clean();
                                         </div>
                                         <div>
                                             <h6 class="text-muted mb-1">Productos</h6>
-                                            <h3 class="mb-0"><?php echo $dashboardData['statsProductos']['total_productos']; ?></h3>
+                                            <h3 class="mb-0"><?php echo $dashboardData['statsProductos']['total_productos'] ?? 0; ?></h3>
                                         </div>
                                     </div>
                                 </div>
@@ -371,7 +416,7 @@ ob_end_clean();
                                         </div>
                                         <div>
                                             <h6 class="text-muted mb-1">Ventas</h6>
-                                            <h3 class="mb-0"><?php echo $dashboardData['statsVentas']['total_ventas']; ?></h3>
+                                            <h3 class="mb-0"><?php echo $dashboardData['statsVentas']['total_ventas'] ?? 0; ?></h3>
                                         </div>
                                     </div>
                                 </div>
@@ -386,7 +431,7 @@ ob_end_clean();
                                         </div>
                                         <div>
                                             <h6 class="text-muted mb-1">Pendientes</h6>
-                                            <h3 class="mb-0"><?php echo $dashboardData['statsVentas']['pendientes']; ?></h3>
+                                            <h3 class="mb-0"><?php echo $dashboardData['statsVentas']['pendientes'] ?? 0; ?></h3>
                                         </div>
                                     </div>
                                 </div>
@@ -401,7 +446,7 @@ ob_end_clean();
                                         </div>
                                         <div>
                                             <h6 class="text-muted mb-1">Clientes</h6>
-                                            <h3 class="mb-0"><?php echo $dashboardData['statsClientes']['activos']; ?></h3>
+                                            <h3 class="mb-0"><?php echo $dashboardData['statsClientes']['activos'] ?? 0; ?></h3>
                                         </div>
                                     </div>
                                 </div>
@@ -417,7 +462,7 @@ ob_end_clean();
                                         </div>
                                         <div>
                                             <h6 class="text-muted mb-1">Favoritos</h6>
-                                            <h3 class="mb-0">5</h3>
+                                            <h3 class="mb-0"><?php echo $dashboardData['total_favoritos'] ?? 0; ?></h3>
                                         </div>
                                     </div>
                                 </div>
@@ -432,7 +477,7 @@ ob_end_clean();
                                         </div>
                                         <div>
                                             <h6 class="text-muted mb-1">En Carrito</h6>
-                                            <h3 class="mb-0">3</h3>
+                                            <h3 class="mb-0"><?php echo $dashboardData['carrito_items'] ?? 0; ?></h3>
                                         </div>
                                     </div>
                                 </div>
@@ -447,7 +492,7 @@ ob_end_clean();
                                         </div>
                                         <div>
                                             <h6 class="text-muted mb-1">Mis Pedidos</h6>
-                                            <h3 class="mb-0"><?php echo $dashboardData['statsPedidos']['total_pedidos']; ?></h3>
+                                            <h3 class="mb-0"><?php echo $dashboardData['total_pedidos'] ?? 0; ?></h3>
                                         </div>
                                     </div>
                                 </div>
@@ -508,7 +553,7 @@ ob_end_clean();
                                         </div>
                                         <div>
                                             <h6 class="text-muted mb-1">Ingresos</h6>
-                                            <h3 class="mb-0">$<?php echo number_format($dashboardData['statsGenerales']['ingresos_totales']); ?></h3>
+                                            <h3 class="mb-0">$<?php echo number_format($dashboardData['statsGenerales']['ingresos_totales'] ?? 0); ?></h3>
                                         </div>
                                     </div>
                                 </div>

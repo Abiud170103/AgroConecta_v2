@@ -11,21 +11,26 @@ header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache'); 
 header('Expires: 0');
 
-session_start();
+// Incluir dependencias
+require_once '../config/database.php';
+require_once '../core/Database.php';
+require_once '../core/SessionManager.php';
+
+SessionManager::startSecureSession();
 
 // Verificación de autenticación
-if (!isset($_SESSION['user_id']) || 
-    (!isset($_SESSION['user_tipo']) && !isset($_SESSION['tipo']))) {
+if (!SessionManager::isLoggedIn()) {
     ob_end_clean();
     header('Location: login.php');
     exit;
 }
 
+$userData = SessionManager::getUserData();
 $user = [
-    'id' => $_SESSION['user_id'],
-    'nombre' => $_SESSION['user_nombre'] ?? $_SESSION['nombre'] ?? 'Usuario Test',
-    'correo' => $_SESSION['user_email'] ?? $_SESSION['correo'] ?? 'usuario@test.com',
-    'tipo' => $_SESSION['user_tipo'] ?? $_SESSION['tipo'] ?? 'cliente'
+    'id' => $userData['id'] ?? $_SESSION['user_id'],
+    'nombre' => $userData['nombre'] ?? $_SESSION['user_nombre'] ?? 'Usuario',
+    'correo' => $userData['correo'] ?? $_SESSION['user_email'] ?? 'usuario@test.com',
+    'tipo' => $userData['tipo'] ?? $_SESSION['user_tipo'] ?? 'cliente'
 ];
 
 // Verificar que sea cliente
@@ -35,93 +40,66 @@ if ($user['tipo'] !== 'cliente') {
     exit;
 }
 
-// Datos de ejemplo para favoritos
-$favoritos = [
-    [
-        'id' => 1,
-        'nombre' => 'Tomates Cherry Orgánicos',
-        'descripcion' => 'Tomates cherry cultivados de forma orgánica, perfectos para ensaladas y snacks saludables',
-        'precio' => 45.50,
-        'precio_anterior' => 52.00,
-        'stock' => 25,
-        'categoria' => 'Verduras',
-        'vendedor' => 'Granja Verde SA',
-        'imagen' => 'tomates-cherry.jpg',
-        'calificacion' => 4.8,
-        'reviews' => 24,
-        'origen' => 'Michoacán',
-        'organico' => true,
-        'descuento' => 12,
-        'disponible' => true,
-        'fecha_agregado' => '2024-12-20',
-        'ultimo_precio' => 45.50,
-        'precio_minimo' => 42.00,
-        'precio_maximo' => 55.00
-    ],
-    [
-        'id' => 3,
-        'nombre' => 'Zanahorias Baby Premium',
-        'descripcion' => 'Zanahorias baby tiernas y dulces, perfectas para cocinar o comer crudas',
-        'precio' => 28.75,
-        'precio_anterior' => 32.00,
-        'stock' => 12,
-        'categoria' => 'Verduras',
-        'vendedor' => 'Productos Frescos Ltda',
-        'imagen' => 'zanahorias-baby.jpg',
-        'calificacion' => 4.7,
-        'reviews' => 31,
-        'origen' => 'Guanajuato',
-        'organico' => true,
-        'descuento' => 10,
-        'disponible' => true,
-        'fecha_agregado' => '2024-12-22',
-        'ultimo_precio' => 28.75,
-        'precio_minimo' => 26.00,
-        'precio_maximo' => 34.00
-    ],
-    [
-        'id' => 5,
-        'nombre' => 'Brócoli Orgánico',
-        'descripcion' => 'Brócoli fresco y orgánico, rico en nutrientes y antioxidantes',
-        'precio' => 42.00,
-        'precio_anterior' => 48.00,
-        'stock' => 15,
-        'categoria' => 'Verduras',
-        'vendedor' => 'Eco Vegetales',
-        'imagen' => 'brocoli.jpg',
-        'calificacion' => 4.9,
-        'reviews' => 22,
-        'origen' => 'Estado de México',
-        'organico' => true,
-        'descuento' => 12,
-        'disponible' => true,
-        'fecha_agregado' => '2024-12-25',
-        'ultimo_precio' => 42.00,
-        'precio_minimo' => 38.00,
-        'precio_maximo' => 48.00
-    ],
-    [
-        'id' => 6,
-        'nombre' => 'Aguacates Hass',
-        'descripcion' => 'Aguacates Hass maduros, perfectos para guacamole y ensaladas',
-        'precio' => 65.00,
-        'precio_anterior' => 0,
-        'stock' => 0,
-        'categoria' => 'Frutas',
-        'vendedor' => 'Aguacates del Sur',
-        'imagen' => 'aguacates.jpg',
-        'calificacion' => 4.8,
-        'reviews' => 45,
-        'origen' => 'Michoacán',
-        'organico' => false,
-        'descuento' => 0,
-        'disponible' => false,
-        'fecha_agregado' => '2024-12-28',
-        'ultimo_precio' => 65.00,
-        'precio_minimo' => 60.00,
-        'precio_maximo' => 70.00
-    ]
-];
+// Obtener favoritos reales de la base de datos
+try {
+    $db = Database::getInstance();
+    $pdo = $db->getConnection();
+    
+    $query = "
+        SELECT 
+            p.id_producto as id,
+            p.nombre,
+            p.descripcion,
+            p.precio,
+            p.stock,
+            p.categoria,
+            p.unidad_medida,
+            p.imagen_url as imagen,
+            p.activo as disponible,
+            u.nombre as vendedor,
+            CONCAT(u.nombre, ' ', COALESCE(u.apellido, '')) as vendedor_completo,
+            f.fecha_agregado
+        FROM favorito f
+        INNER JOIN producto p ON f.id_producto = p.id_producto
+        INNER JOIN usuario u ON p.id_usuario = u.id_usuario
+        WHERE f.id_usuario = ? AND p.activo = 1
+        ORDER BY f.fecha_agregado DESC
+    ";
+    
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$user['id']]);
+    $favoritos_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Transformar datos para compatibilidad con frontend
+    $favoritos = [];
+    foreach ($favoritos_db as $fav) {
+        $favoritos[] = [
+            'id' => $fav['id'],
+            'nombre' => $fav['nombre'],
+            'descripcion' => $fav['descripcion'],
+            'precio' => floatval($fav['precio']),
+            'precio_anterior' => 0, // Campo calculable
+            'stock' => intval($fav['stock']),
+            'categoria' => $fav['categoria'],
+            'vendedor' => $fav['vendedor_completo'],
+            'imagen' => $fav['imagen'] ?: 'default-product.jpg',
+            'calificacion' => 4.5, // Valor por defecto
+            'reviews' => 0,
+            'origen' => 'México',
+            'organico' => false,
+            'descuento' => 0,
+            'disponible' => $fav['disponible'] == 1 && $fav['stock'] > 0,
+            'fecha_agregado' => $fav['fecha_agregado'],
+            'ultimo_precio' => floatval($fav['precio']),
+            'precio_minimo' => floatval($fav['precio']) * 0.9,
+            'precio_maximo' => floatval($fav['precio']) * 1.2
+        ];
+    }
+    
+} catch (Exception $e) {
+    error_log("Error en favoritos: " . $e->getMessage());
+    $favoritos = []; // Array vacío en caso de error
+}
 
 ob_end_clean();
 ?>
