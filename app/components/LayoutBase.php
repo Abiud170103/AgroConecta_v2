@@ -302,7 +302,7 @@ class LayoutBase {
                 return [
                     ['key' => 'dashboard', 'url' => 'dashboard.php', 'icon' => 'fas fa-home', 'label' => 'Dashboard'],
                     ['key' => 'usuarios', 'url' => 'usuarios.php', 'icon' => 'fas fa-users', 'label' => 'Gestión de Usuarios'],
-                    ['key' => 'productos', 'url' => 'productos-admin.php', 'icon' => 'fas fa-boxes', 'label' => 'Todos los Productos'],
+                    ['key' => 'productos', 'url' => 'productos.php', 'icon' => 'fas fa-boxes', 'label' => 'Todos los Productos'],
                     ['key' => 'pedidos', 'url' => 'pedidos-admin.php', 'icon' => 'fas fa-clipboard-list', 'label' => 'Todos los Pedidos'],
                     ['key' => 'reportes', 'url' => 'reportes.php', 'icon' => 'fas fa-chart-bar', 'label' => 'Reportes del Sistema'],
                     ['key' => 'configuracion', 'url' => 'configuracion.php', 'icon' => 'fas fa-cogs', 'label' => 'Configuración']

@@ -347,10 +347,7 @@ ob_end_clean();
                             <a href="usuarios.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-users me-2"></i> Gestión de Usuarios
                             </a>
-                            <a href="vendedores.php" class="list-group-item list-group-item-action">
-                                <i class="fas fa-store-alt me-2"></i> Vendedores
-                            </a>
-                            <a href="productos-admin.php" class="list-group-item list-group-item-action">
+                            <a href="productos.php" class="list-group-item list-group-item-action">
                                 <i class="fas fa-boxes me-2"></i> Productos
                             </a>
                             <a href="reportes.php" class="list-group-item list-group-item-action">
@@ -638,14 +635,6 @@ ob_end_clean();
                                                 <a href="usuarios.php" class="btn btn-dark btn-lg text-decoration-none">
                                                     <i class="fas fa-users me-2"></i>
                                                     Gestión Usuarios
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-6 mb-3">
-                                            <div class="d-grid">
-                                                <a href="vendedores.php" class="btn btn-secondary btn-lg text-decoration-none">
-                                                    <i class="fas fa-store me-2"></i>
-                                                    Supervisar Vendedores
                                                 </a>
                                             </div>
                                         </div>
