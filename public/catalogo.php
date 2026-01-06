@@ -11,22 +11,28 @@ header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache'); 
 header('Expires: 0');
 
-session_start();
+// Incluir dependencias
+require_once '../config/database.php';
+require_once '../core/Database.php';
+require_once '../core/SessionManager.php';
+
+SessionManager::startSecureSession();
 
 // Verificación de autenticación
-if (!isset($_SESSION['user_id']) || 
-    (!isset($_SESSION['user_tipo']) && !isset($_SESSION['tipo']))) {
+if (!SessionManager::isLoggedIn()) {
     ob_end_clean();
     header('Location: login.php');
     exit;
 }
 
+// Obtener datos del usuario desde SessionManager
+$userData = SessionManager::getUserData();
 $user = [
-    'id' => $_SESSION['user_id'],
-    'nombre' => $_SESSION['user_nombre'] ?? $_SESSION['nombre'] ?? 'Usuario Test',
-    'correo' => $_SESSION['user_email'] ?? $_SESSION['correo'] ?? 'usuario@test.com',
-    'tipo' => $_SESSION['user_tipo'] ?? $_SESSION['tipo'] ?? 'cliente',
-    'tipo_usuario' => $_SESSION['user_tipo'] ?? $_SESSION['tipo'] ?? 'cliente'
+    'id' => $userData['id'] ?? $_SESSION['user_id'],
+    'nombre' => $userData['nombre'] ?? $_SESSION['user_nombre'] ?? 'Usuario Test',
+    'correo' => $userData['correo'] ?? $_SESSION['user_email'] ?? 'usuario@test.com',
+    'tipo' => $userData['tipo'] ?? $_SESSION['user_tipo'] ?? 'cliente',
+    'tipo_usuario' => $userData['tipo'] ?? $_SESSION['user_tipo'] ?? 'cliente'
 ];
 
 // Verificar que sea cliente
@@ -36,213 +42,133 @@ if ($user['tipo'] !== 'cliente') {
     exit;
 }
 
-// Datos de ejemplo para productos del catálogo
-$productos = [
-    [
-        'id' => 1,
-        'nombre' => 'Tomates Cherry Orgánicos',
-        'descripcion' => 'Tomates cherry cultivados de forma orgánica, perfectos para ensaladas y snacks saludables',
-        'precio' => 45.50,
-        'precio_anterior' => 52.00,
-        'stock' => 25,
-        'categoria' => 'Verduras',
-        'vendedor' => 'Granja Verde SA',
-        'nombre_vendedor' => 'Granja Verde SA',
-        'imagen' => 'tomates-cherry.jpg',
-        'calificacion' => 4.8,
-        'reviews' => 24,
-        'origen' => 'Michoacán',
-        'ciudad' => 'Morelia',
-        'estado' => 'Michoacán',
-        'unidad_medida' => 'kg',
-        'organico' => true,
-        'descuento' => 12,
-        'tags' => ['Orgánico', 'Local', 'Fresco'],
-        'disponible' => true
-    ],
-    [
-        'id' => 2,
-        'nombre' => 'Lechugas Hidropónicas',
-        'descripcion' => 'Lechugas frescas cultivadas hidropónicamente, crujientes y llenas de sabor',
-        'precio' => 35.00,
-        'precio_anterior' => 0,
-        'stock' => 18,
-        'categoria' => 'Verduras',
-        'vendedor' => 'Hidropónicos del Norte',
-        'nombre_vendedor' => 'Hidropónicos del Norte',
-        'imagen' => 'lechugas.jpg',
-        'calificacion' => 4.6,
-        'reviews' => 18,
-        'origen' => 'Jalisco',
-        'ciudad' => 'Guadalajara',
-        'estado' => 'Jalisco',
-        'unidad_medida' => 'pza',
-        'organico' => false,
-        'descuento' => 0,
-        'tags' => ['Hidropónico', 'Crujiente'],
-        'disponible' => true
-    ],
-    [
-        'id' => 3,
-        'nombre' => 'Zanahorias Baby Premium',
-        'descripcion' => 'Zanahorias baby tiernas y dulces, perfectas para cocinar o comer crudas',
-        'precio' => 28.75,
-        'precio_anterior' => 32.00,
-        'stock' => 12,
-        'categoria' => 'Verduras',
-        'vendedor' => 'Productos Frescos Ltda',
-        'nombre_vendedor' => 'Productos Frescos Ltda',
-        'imagen' => 'zanahorias-baby.jpg',
-        'calificacion' => 4.7,
-        'reviews' => 31,
-        'origen' => 'Guanajuato',
-        'ciudad' => 'León',
-        'estado' => 'Guanajuato',
-        'unidad_medida' => 'kg',
-        'organico' => true,
-        'descuento' => 10,
-        'tags' => ['Orgánico', 'Premium', 'Dulce'],
-        'disponible' => true
-    ],
-    [
-        'id' => 4,
-        'nombre' => 'Espinacas Frescas',
-        'descripcion' => 'Espinacas tiernas y nutritivas, ricas en hierro y vitaminas',
-        'precio' => 38.50,
-        'precio_anterior' => 0,
-        'stock' => 8,
-        'categoria' => 'Verduras',
-        'vendedor' => 'Granja Verde SA',
-        'nombre_vendedor' => 'Granja Verde SA',
-        'imagen' => 'espinacas.jpg',
-        'calificacion' => 4.5,
-        'reviews' => 16,
-        'origen' => 'Puebla',
-        'ciudad' => 'Puebla',
-        'estado' => 'Puebla',
-        'unidad_medida' => 'manojo',
-        'organico' => true,
-        'descuento' => 0,
-        'tags' => ['Orgánico', 'Nutritivo', 'Fresco'],
-        'disponible' => true
-    ],
-    [
-        'id' => 5,
-        'nombre' => 'Brócoli Orgánico',
-        'descripcion' => 'Brócoli fresco y orgánico, rico en nutrientes y antioxidantes',
-        'precio' => 42.00,
-        'precio_anterior' => 48.00,
-        'stock' => 15,
-        'categoria' => 'Verduras',
-        'vendedor' => 'Eco Vegetales',
-        'nombre_vendedor' => 'Eco Vegetales',
-        'imagen' => 'brocoli.jpg',
-        'calificacion' => 4.9,
-        'reviews' => 22,
-        'origen' => 'Estado de México',
-        'ciudad' => 'Toluca',
-        'estado' => 'Estado de México',
-        'unidad_medida' => 'pza',
-        'organico' => true,
-        'descuento' => 12,
-        'tags' => ['Orgánico', 'Antioxidante', 'Premium'],
-        'disponible' => true
-    ],
-    [
-        'id' => 6,
-        'nombre' => 'Aguacates Hass',
-        'descripcion' => 'Aguacates Hass maduros, perfectos para guacamole y ensaladas',
-        'precio' => 65.00,
-        'precio_anterior' => 0,
-        'stock' => 20,
-        'categoria' => 'Frutas',
-        'vendedor' => 'Aguacates del Sur',
-        'nombre_vendedor' => 'Aguacates del Sur',
-        'imagen' => 'aguacates.jpg',
-        'calificacion' => 4.8,
-        'reviews' => 45,
-        'origen' => 'Michoacán',
-        'ciudad' => 'Uruapan',
-        'estado' => 'Michoacán',
-        'unidad_medida' => 'kg',
-        'organico' => false,
-        'descuento' => 0,
-        'tags' => ['Premium', 'Cremoso', 'Nutritivo'],
-        'disponible' => true
-    ]
-];
-
-// Inicializar variables necesarias
-$isLoggedIn = isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
-
-// Procesar filtros
-$filtros = [
-    'busqueda' => $_GET['busqueda'] ?? '',
-    'categoria' => $_GET['categoria'] ?? '',
-    'ciudad' => $_GET['ciudad'] ?? '',
-    'precio_min' => $_GET['precio_min'] ?? '',
-    'precio_max' => $_GET['precio_max'] ?? '',
-    'orden' => $_GET['orden'] ?? 'recientes',
-    'pagina' => max(1, intval($_GET['pagina'] ?? 1))
-];
-
-// Aplicar filtros a los productos
-$productosFiltrados = $productos;
-
-// Filtro por búsqueda
-if (!empty($filtros['busqueda'])) {
-    $productosFiltrados = array_filter($productosFiltrados, function($producto) use ($filtros) {
-        return stripos($producto['nombre'], $filtros['busqueda']) !== false ||
-               stripos($producto['descripcion'], $filtros['busqueda']) !== false ||
-               stripos($producto['vendedor'], $filtros['busqueda']) !== false;
-    });
-}
-
-// Filtro por categoría
-if (!empty($filtros['categoria'])) {
-    $productosFiltrados = array_filter($productosFiltrados, function($producto) use ($filtros) {
-        return $producto['categoria'] === $filtros['categoria'];
-    });
-}
-
-// Filtro por precio
-if (!empty($filtros['precio_min'])) {
-    $productosFiltrados = array_filter($productosFiltrados, function($producto) use ($filtros) {
-        return $producto['precio'] >= floatval($filtros['precio_min']);
-    });
-}
-
-if (!empty($filtros['precio_max'])) {
-    $productosFiltrados = array_filter($productosFiltrados, function($producto) use ($filtros) {
-        return $producto['precio'] <= floatval($filtros['precio_max']);
-    });
-}
-
-// Ordenar productos
-switch ($filtros['orden']) {
-    case 'precio_asc':
-        usort($productosFiltrados, function($a, $b) {
-            return $a['precio'] <=> $b['precio'];
-        });
-        break;
-    case 'precio_desc':
-        usort($productosFiltrados, function($a, $b) {
-            return $b['precio'] <=> $a['precio'];
-        });
-        break;
-    case 'popularidad':
-        usort($productosFiltrados, function($a, $b) {
-            return ($b['calificacion'] * $b['reviews']) <=> ($a['calificacion'] * $a['reviews']);
-        });
-        break;
-    case 'calificacion':
-        usort($productosFiltrados, function($a, $b) {
-            return $b['calificacion'] <=> $a['calificacion'];
-        });
-        break;
-    default: // recientes
-        // Mantener orden original
-        break;
+// Obtener productos de la base de datos
+try {
+    $db = Database::getInstance();
+    $pdo = $db->getConnection();
+    
+    // Procesar filtros
+    $filtros = [
+        'busqueda' => $_GET['busqueda'] ?? '',
+        'categoria' => $_GET['categoria'] ?? '',
+        'ciudad' => $_GET['ciudad'] ?? '',
+        'precio_min' => $_GET['precio_min'] ?? '',
+        'precio_max' => $_GET['precio_max'] ?? '',
+        'orden' => $_GET['orden'] ?? 'recientes',
+        'pagina' => max(1, intval($_GET['pagina'] ?? 1))
+    ];
+    
+    // Construir consulta base
+    $query = "
+        SELECT 
+            p.id_producto as id,
+            p.nombre,
+            p.descripcion,
+            p.precio,
+            p.stock,
+            p.categoria,
+            p.unidad_medida,
+            p.imagen_url as imagen,
+            p.activo as disponible,
+            u.nombre as vendedor_nombre,
+            u.nombre as nombre_vendedor,
+            CONCAT(u.nombre, ' ', COALESCE(u.apellido, '')) as vendedor,
+            p.fecha_publicacion
+        FROM producto p
+        INNER JOIN usuario u ON p.id_usuario = u.id_usuario
+        WHERE p.activo = 1
+    ";
+    
+    $params = [];
+    
+    // Aplicar filtros
+    if (!empty($filtros['busqueda'])) {
+        $query .= " AND (p.nombre LIKE ? OR p.descripcion LIKE ? OR u.nombre LIKE ?)";
+        $busqueda = "%{$filtros['busqueda']}%";
+        $params[] = $busqueda;
+        $params[] = $busqueda;
+        $params[] = $busqueda;
+    }
+    
+    if (!empty($filtros['categoria'])) {
+        $query .= " AND p.categoria = ?";
+        $params[] = $filtros['categoria'];
+    }
+    
+    // Ciudad no disponible en la tabla usuario
+    // if (!empty($filtros['ciudad'])) {
+    //     $query .= " AND u.ciudad = ?";
+    //     $params[] = $filtros['ciudad'];
+    // }
+    
+    if (!empty($filtros['precio_min'])) {
+        $query .= " AND p.precio >= ?";
+        $params[] = floatval($filtros['precio_min']);
+    }
+    
+    if (!empty($filtros['precio_max'])) {
+        $query .= " AND p.precio <= ?";
+        $params[] = floatval($filtros['precio_max']);
+    }
+    
+    // Aplicar ordenamiento
+    switch ($filtros['orden']) {
+        case 'precio_asc':
+            $query .= " ORDER BY p.precio ASC";
+            break;
+        case 'precio_desc':
+            $query .= " ORDER BY p.precio DESC";
+            break;
+        case 'nombre':
+            $query .= " ORDER BY p.nombre ASC";
+            break;
+        default: // recientes
+            $query .= " ORDER BY p.fecha_publicacion DESC";
+            break;
+    }
+    
+    $stmt = $pdo->prepare($query);
+    $stmt->execute($params);
+    $productos_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Transformar datos para compatibilidad con el frontend
+    $productos = [];
+    foreach ($productos_db as $prod) {
+        $productos[] = [
+            'id' => $prod['id'],
+            'nombre' => $prod['nombre'],
+            'descripcion' => $prod['descripcion'],
+            'precio' => floatval($prod['precio']),
+            'precio_anterior' => 0, // Podríamos implementar historial de precios
+            'stock' => intval($prod['stock']),
+            'categoria' => $prod['categoria'],
+            'vendedor' => $prod['vendedor'],
+            'nombre_vendedor' => $prod['vendedor_nombre'],
+            'imagen' => $prod['imagen'] ?: 'default-product.jpg',
+            'calificacion' => 4.5, // Valor por defecto, podríamos implementar sistema de reseñas
+            'reviews' => 0, // Valor por defecto
+            'origen' => $prod['origen'] ?: 'México',
+            'ciudad' => 'Ciudad', // Campo no disponible
+            'estado' => 'Estado', // Campo no disponible
+            'unidad_medida' => $prod['unidad_medida'],
+            'organico' => false, // Podríamos agregar campo en BD
+            'descuento' => 0, // Podríamos implementar sistema de descuentos
+            'tags' => ['Fresco'], // Tags por defecto
+            'disponible' => $prod['disponible'] == 1 && $prod['stock'] > 0
+        ];
+    }
+    
+    $productosFiltrados = $productos;
+    
+    // Inicializar variables necesarias para el frontend
+    $isLoggedIn = SessionManager::isLoggedIn();
+    
+} catch (Exception $e) {
+    error_log("Error en catálogo: " . $e->getMessage());
+    // Productos de respaldo en caso de error
+    $productos = [];
+    $productosFiltrados = [];
+    $isLoggedIn = false;
 }
 
 $totalProductos = count($productosFiltrados);
