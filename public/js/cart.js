@@ -787,21 +787,22 @@ document.addEventListener('DOMContentLoaded', function() {
         LoadingManager.show('Vaciando carrito...');
         
         try {
-            const response = await fetch('/cart/clear', {
+            const response = await fetch('api/carrito.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
-                    _token: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                    action: 'limpiar'
                 })
             });
             
             const result = await response.json();
             
             if (result.success) {
-                location.reload(); // Reload to show empty cart state
+                // Recargar la página para mostrar el carrito vacío
+                location.reload();
             } else {
                 throw new Error(result.message || 'Error al vaciar carrito');
             }

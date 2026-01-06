@@ -11,87 +11,73 @@ header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache'); 
 header('Expires: 0');
 
-session_start();
+require_once '../core/SessionManager.php';
+require_once '../core/Database.php';
+
+SessionManager::startSecureSession();
 
 // Verificación de autenticación
-if (!isset($_SESSION['user_id']) || 
-    (!isset($_SESSION['user_tipo']) && !isset($_SESSION['tipo']))) {
+if (!SessionManager::isLoggedIn()) {
     ob_end_clean();
     header('Location: login.php');
     exit;
 }
 
-$user = [
-    'id' => $_SESSION['user_id'],
-    'nombre' => $_SESSION['user_nombre'] ?? $_SESSION['nombre'] ?? 'Usuario Test',
-    'correo' => $_SESSION['user_email'] ?? $_SESSION['correo'] ?? 'usuario@test.com',
-    'tipo' => $_SESSION['user_tipo'] ?? $_SESSION['tipo'] ?? 'cliente'
-];
+$userData = SessionManager::getUserData();
+
+// Verificar que getUserData no sea null
+if (!$userData) {
+    ob_end_clean();
+    header('Location: login.php');
+    exit;
+}
 
 // Verificar que sea cliente
-if ($user['tipo'] !== 'cliente') {
+if ($userData['tipo'] !== 'cliente') {
     ob_end_clean();
     header('Location: dashboard.php');
     exit;
 }
 
-// Productos de ejemplo para el carrito
-$productosDisponibles = [
-    1 => [
-        'id' => 1,
-        'nombre' => 'Tomates Cherry Orgánicos',
-        'precio' => 45.50,
-        'vendedor' => 'Granja Verde SA',
-        'imagen' => 'tomates-cherry.jpg',
-        'stock' => 25,
-        'disponible' => true
-    ],
-    2 => [
-        'id' => 2,
-        'nombre' => 'Lechugas Hidropónicas',
-        'precio' => 35.00,
-        'vendedor' => 'Hidropónicos del Norte',
-        'imagen' => 'lechugas.jpg',
-        'stock' => 18,
-        'disponible' => true
-    ],
-    3 => [
-        'id' => 3,
-        'nombre' => 'Zanahorias Baby Premium',
-        'precio' => 28.75,
-        'vendedor' => 'Productos Frescos Ltda',
-        'imagen' => 'zanahorias-baby.jpg',
-        'stock' => 12,
-        'disponible' => true
-    ]
-];
+// Obtener carrito real de la base de datos
+$db = Database::getInstance();
 
-// Ejemplo de carrito con productos
-$carrito = [
-    [
-        'producto_id' => 1,
-        'cantidad' => 2,
-        'precio_unitario' => 45.50,
-        'subtotal' => 91.00
-    ],
-    [
-        'producto_id' => 2,
-        'cantidad' => 1,
-        'precio_unitario' => 35.00,
-        'subtotal' => 35.00
-    ],
-    [
-        'producto_id' => 3,
-        'cantidad' => 3,
-        'precio_unitario' => 28.75,
-        'subtotal' => 86.25
-    ]
-];
+// Consulta para obtener items del carrito
+$carritoQuery = "SELECT c.*, p.nombre, p.precio, p.imagen_url, p.stock, u.nombre as vendedor_nombre
+                FROM carrito c
+                JOIN producto p ON c.id_producto = p.id_producto
+                JOIN usuario u ON p.id_usuario = u.id_usuario
+                WHERE c.id_usuario = ?
+                ORDER BY c.fecha_agregado DESC";
 
-$total_productos = array_sum(array_column($carrito, 'cantidad'));
-$subtotal = array_sum(array_column($carrito, 'subtotal'));
-$envio = 50.00;
-$descuentos = 15.00;
+$carritoItems = $db->select($carritoQuery, [$userData['id']]);
+
+$carrito = [];
+$total_productos = 0;
+$subtotal = 0;
+
+if ($carritoItems) {
+    foreach ($carritoItems as $item) {
+        $itemSubtotal = $item['cantidad'] * $item['precio'];
+        $carrito[] = [
+            'id_carrito' => $item['id_carrito'],
+            'producto_id' => $item['id_producto'],
+            'nombre' => $item['nombre'],
+            'cantidad' => $item['cantidad'],
+            'precio_unitario' => $item['precio'],
+            'subtotal' => $itemSubtotal,
+            'imagen' => $item['imagen_url'] ?? 'default-product.jpg',
+            'vendedor' => $item['vendedor_nombre'],
+            'stock_disponible' => $item['stock']
+        ];
+        
+        $total_productos += $item['cantidad'];
+        $subtotal += $itemSubtotal;
+    }
+}
+
+$envio = ($subtotal > 500) ? 0 : 50.00;  // Envío gratis por compras mayores a $500
+$descuentos = 0; // Por ahora sin descuentos, se puede agregar cupones después
 $total = $subtotal + $envio - $descuentos;
 
 ob_end_clean();
@@ -348,7 +334,7 @@ ob_end_clean();
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user-circle me-1"></i>
-                            <?php echo htmlspecialchars($user['nombre']); ?>
+                            <?php echo htmlspecialchars($userData['nombre'] ?? 'Usuario'); ?>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Perfil</a></li>
@@ -448,8 +434,7 @@ ob_end_clean();
                         </div>
 
                         <?php foreach ($carrito as $index => $item): ?>
-                            <?php $producto = $productosDisponibles[$item['producto_id']]; ?>
-                            <div class="row align-items-center p-3 mb-3" style="border: 1px solid var(--border-color); border-radius: 10px;" data-product-id="<?php echo $producto['id']; ?>">
+                            <div class="row align-items-center p-3 mb-3" style="border: 1px solid var(--border-color); border-radius: 10px;" data-product-id="<?php echo $item['producto_id']; ?>">
                                 <div class="col-md-2">
                                     <div class="product-image">
                                         <i class="fas fa-seedling"></i>
@@ -457,23 +442,23 @@ ob_end_clean();
                                 </div>
                                 
                                 <div class="col-md-4">
-                                    <h6 class="mb-1"><?php echo htmlspecialchars($producto['nombre']); ?></h6>
+                                    <h6 class="mb-1"><?php echo htmlspecialchars($item['nombre']); ?></h6>
                                     <small class="text-muted">
-                                        <i class="fas fa-store me-1"></i><?php echo htmlspecialchars($producto['vendedor']); ?>
+                                        <i class="fas fa-store me-1"></i><?php echo htmlspecialchars($item['vendedor']); ?>
                                     </small>
                                     <br>
                                     <small class="text-success">
-                                        <i class="fas fa-check-circle me-1"></i>En stock (<?php echo $producto['stock']; ?> disponibles)
+                                        <i class="fas fa-check-circle me-1"></i>En stock (<?php echo $item['stock_disponible']; ?> disponibles)
                                     </small>
                                 </div>
                                 
                                 <div class="col-md-2">
                                     <div class="quantity-controls">
-                                        <button class="quantity-btn" onclick="cambiarCantidad(<?php echo $producto['id']; ?>, -1)">
+                                        <button class="quantity-btn" onclick="cambiarCantidad(<?php echo $item['producto_id']; ?>, -1)">
                                             <i class="fas fa-minus"></i>
                                         </button>
-                                        <input type="number" class="quantity-input" value="<?php echo $item['cantidad']; ?>" min="1" max="<?php echo $producto['stock']; ?>">
-                                        <button class="quantity-btn" onclick="cambiarCantidad(<?php echo $producto['id']; ?>, 1)">
+                                        <input type="number" class="quantity-input" value="<?php echo $item['cantidad']; ?>" min="1" max="<?php echo $item['stock_disponible']; ?>">
+                                        <button class="quantity-btn" onclick="cambiarCantidad(<?php echo $item['producto_id']; ?>, 1)">
                                             <i class="fas fa-plus"></i>
                                         </button>
                                     </div>
@@ -488,7 +473,7 @@ ob_end_clean();
                                     <div class="text-muted small">Subtotal</div>
                                     <strong class="text-primary subtotal-item">$<?php echo number_format($item['subtotal'], 2); ?></strong>
                                     <br>
-                                    <button class="btn btn-link text-danger p-0 mt-1" onclick="eliminarProducto(<?php echo $producto['id']; ?>)" title="Eliminar producto">
+                                    <button class="btn btn-link text-danger p-0 mt-1" onclick="eliminarProducto(<?php echo $item['producto_id']; ?>)" title="Eliminar producto">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -716,12 +701,38 @@ ob_end_clean();
         }
 
         function limpiarCarrito() {
-            if (confirm('¿Estás seguro de que quieres limpiar todo el carrito?')) {
-                carritoData = [];
-                showNotification('Carrito limpiado', 'info');
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
+            // Usar la función clearCart del cart.js
+            if (typeof clearCart === 'function') {
+                clearCart();
+            } else {
+                // Fallback si clearCart no está disponible
+                if (confirm('¿Estás seguro de que quieres limpiar todo el carrito?')) {
+                    fetch('api/carrito.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            action: 'limpiar'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification('Carrito limpiado exitosamente', 'success');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            showNotification('Error al limpiar carrito: ' + (data.message || 'Error desconocido'), 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Error al limpiar carrito', 'error');
+                    });
+                }
             }
         }
 
