@@ -642,62 +642,129 @@ ob_end_clean();
     <script>
         // Variables globales
         let carritoData = <?php echo json_encode($carrito); ?>;
-        let productosData = <?php echo json_encode($productosDisponibles); ?>;
 
         function cambiarCantidad(productId, cambio) {
             const row = document.querySelector(`[data-product-id="${productId}"]`);
+            if (!row) return;
+            
             const input = row.querySelector('.quantity-input');
-            const nuevaCantidad = Math.max(1, parseInt(input.value) + cambio);
+            const cantidadActual = parseInt(input.value);
+            const nuevaCantidad = Math.max(1, cantidadActual + cambio);
+            
+            // Buscar el item en el carrito para obtener stock
+            const item = carritoData.find(item => item.producto_id == productId);
+            if (!item) return;
             
             // Verificar stock disponible
-            const producto = productosData[productId];
-            if (nuevaCantidad > producto.stock) {
+            if (nuevaCantidad > item.stock_disponible) {
                 showNotification('No hay suficiente stock disponible', 'warning');
                 return;
             }
             
-            input.value = nuevaCantidad;
-            actualizarSubtotal(productId, nuevaCantidad);
-            actualizarTotales();
+            // Mostrar loading en el input
+            input.disabled = true;
             
-            showNotification('Cantidad actualizada', 'success');
+            // Enviar actualización a la API
+            fetch('api/carrito.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    action: 'actualizar',
+                    id: productId,
+                    cantidad: nuevaCantidad
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualizar la interfaz
+                    input.value = nuevaCantidad;
+                    actualizarSubtotal(productId, nuevaCantidad, item.precio_unitario);
+                    actualizarTotales();
+                    showNotification('Cantidad actualizada', 'success');
+                    
+                    // Actualizar datos locales
+                    item.cantidad = nuevaCantidad;
+                    item.subtotal = item.precio_unitario * nuevaCantidad;
+                } else {
+                    showNotification('Error al actualizar cantidad: ' + (data.message || 'Error desconocido'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error al actualizar cantidad', 'error');
+            })
+            .finally(() => {
+                input.disabled = false;
+            });
         }
 
-        function actualizarSubtotal(productId, cantidad) {
-            const producto = productosData[productId];
-            const subtotal = producto.precio * cantidad;
+        function actualizarSubtotal(productId, cantidad, precioUnitario) {
+            const subtotal = precioUnitario * cantidad;
             
             const row = document.querySelector(`[data-product-id="${productId}"]`);
             const subtotalElement = row.querySelector('.subtotal-item');
-            subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
-            
-            // Actualizar datos del carrito
-            const item = carritoData.find(item => item.producto_id == productId);
-            if (item) {
-                item.cantidad = cantidad;
-                item.subtotal = subtotal;
+            if (subtotalElement) {
+                subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
             }
         }
 
         function eliminarProducto(productId) {
-            if (confirm('¿Estás seguro de que quieres eliminar este producto del carrito?')) {
-                const row = document.querySelector(`[data-product-id="${productId}"]`);
-                row.style.transition = 'all 0.3s ease';
-                row.style.transform = 'translateX(-100%)';
-                row.style.opacity = '0';
-                
-                setTimeout(() => {
-                    row.remove();
-                    carritoData = carritoData.filter(item => item.producto_id != productId);
-                    actualizarTotales();
-                    showNotification('Producto eliminado del carrito', 'info');
-                    
-                    // Verificar si el carrito está vacío
-                    if (carritoData.length === 0) {
-                        location.reload();
-                    }
-                }, 300);
+            if (!confirm('¿Estás seguro de que quieres eliminar este producto del carrito?')) {
+                return;
             }
+            
+            const row = document.querySelector(`[data-product-id="${productId}"]`);
+            if (!row) return;
+            
+            // Efecto visual de eliminación
+            row.style.transition = 'all 0.3s ease';
+            row.style.transform = 'translateX(-100%)';
+            row.style.opacity = '0';
+            
+            // Enviar eliminación a la API
+            fetch('api/carrito.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    action: 'eliminar',
+                    id: productId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    setTimeout(() => {
+                        row.remove();
+                        carritoData = carritoData.filter(item => item.producto_id != productId);
+                        actualizarTotales();
+                        showNotification('Producto eliminado del carrito', 'success');
+                        
+                        // Verificar si el carrito está vacío
+                        if (carritoData.length === 0) {
+                            setTimeout(() => location.reload(), 1000);
+                        }
+                    }, 300);
+                } else {
+                    // Revertir el efecto visual si hay error
+                    row.style.transform = 'translateX(0)';
+                    row.style.opacity = '1';
+                    showNotification('Error al eliminar producto: ' + (data.message || 'Error desconocido'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Revertir el efecto visual si hay error
+                row.style.transform = 'translateX(0)';
+                row.style.opacity = '1';
+                showNotification('Error al eliminar producto', 'error');
+            });
         }
 
         function limpiarCarrito() {
@@ -740,22 +807,38 @@ ob_end_clean();
             const subtotal = carritoData.reduce((sum, item) => sum + item.subtotal, 0);
             const totalProductos = carritoData.reduce((sum, item) => sum + item.cantidad, 0);
             
-            // Obtener costo de envío seleccionado
-            const envioSelected = document.querySelector('input[name="shipping"]:checked');
-            const envio = envioSelected ? parseFloat(envioSelected.value) : 50;
-            
-            const descuentos = 15.00; // Descuento fijo por ahora
+            // Cálculo de envío (gratis si es mayor a $500)
+            const envio = subtotal > 500 ? 0 : 50.00;
+            const descuentos = 0; // Por ahora sin descuentos
             const total = subtotal + envio - descuentos;
             
-            // Actualizar display
-            document.getElementById('subtotal-display').textContent = `$${subtotal.toFixed(2)}`;
-            document.getElementById('total-display').textContent = `$${total.toFixed(2)}`;
+            // Actualizar elementos del resumen si existen
+            const subtotalElement = document.querySelector('[data-subtotal]') || document.getElementById('subtotal-display');
+            if (subtotalElement) {
+                subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
+            }
             
-            // Actualizar contador de productos
+            const envioElement = document.querySelector('[data-envio]') || document.getElementById('envio-display');
+            if (envioElement) {
+                envioElement.textContent = envio === 0 ? 'GRATIS' : `$${envio.toFixed(2)}`;
+            }
+            
+            const totalElement = document.querySelector('[data-total]') || document.getElementById('total-display');
+            if (totalElement) {
+                totalElement.textContent = `$${total.toFixed(2)}`;
+            }
+            
+            // Actualizar contador de productos en el badge del carrito
             const contadores = document.querySelectorAll('.badge');
             contadores.forEach(contador => {
                 contador.textContent = totalProductos;
             });
+            
+            // Actualizar título del carrito
+            const tituloCarrito = document.querySelector('h5:contains("Productos en tu carrito")');
+            if (tituloCarrito) {
+                tituloCarrito.innerHTML = `<i class="fas fa-list me-2"></i>Productos en tu carrito (${totalProductos} artículos)`;
+            }
         }
 
         function aplicarDescuento() {
