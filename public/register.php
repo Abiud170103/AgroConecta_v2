@@ -114,6 +114,24 @@ if (SessionManager::isLoggedIn()) {
         .text-muted {
             color: #6c757d !important;
         }
+        
+        /* Asegurar texto visible mientras se escribe */
+        .form-control,
+        .form-control:focus,
+        .form-control:active,
+        .form-control:hover {
+            color: #2c3e50 !important;
+            background-color: #ffffff !important;
+        }
+        
+        .input-icon-wrapper .form-control {
+            color: #2c3e50 !important;
+        }
+        
+        /* Para select también */
+        select.form-control {
+            color: #2c3e50 !important;
+        }
     </style>
 </head>
 <body>

@@ -111,6 +111,7 @@
     width: 100%;
     padding: 0.875rem 1rem;
     font-size: 0.95rem;
+    color: #2c3e50 !important;
     border: 2px solid #e9ecef;
     border-radius: 10px;
     transition: all 0.3s ease;
@@ -120,17 +121,20 @@
 .form-control:focus {
     outline: none;
     border-color: #28a745;
-    background: #ffffff;
+    background: #ffffff !important;
+    color: #2c3e50 !important;
     box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
 }
 
 .form-control.is-invalid {
     border-color: #dc3545;
-    background: #fff5f5;
+    background: #fff5f5 !important;
+    color: #2c3e50 !important;
 }
 
 .form-control.is-invalid:focus {
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    color: #2c3e50 !important;
 }
 
 .invalid-feedback {
@@ -147,6 +151,7 @@
 
 .input-icon-wrapper .form-control {
     padding-left: 3rem;
+    color: #2c3e50 !important;
 }
 
 .input-icon-wrapper i {
@@ -498,6 +503,26 @@
 /* Asegurar que los placeholders sean visibles */
 .form-control::placeholder {
     color: #9ca3af !important;
+    opacity: 1;
+}
+
+/* Asegurar colores en todos los estados del input */
+.form-control,
+.form-control:focus,
+.form-control:active,
+.form-control:hover {
+    color: #2c3e50 !important;
+}
+
+/* Para navegadores webkit */
+.form-control::-webkit-input-placeholder {
+    color: #9ca3af !important;
+}
+
+/* Para Firefox */
+.form-control::-moz-placeholder {
+    color: #9ca3af !important;
+    opacity: 1;
 }
 
 /* === RESPONSIVE === */

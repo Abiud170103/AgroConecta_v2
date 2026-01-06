@@ -12,8 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Verificar token CSRF
-if (!SessionManager::validateCSRF($_POST['csrf_token'] ?? '')) {
-    SessionManager::setFlash('error', 'Token de seguridad inválido');
+$csrf_token = $_POST['csrf_token'] ?? '';
+if (!SessionManager::validateCSRF($csrf_token)) {
+    error_log("CSRF validation failed. Expected: " . ($_SESSION['_token'] ?? 'Not set') . ", Got: {$csrf_token}");
+    $_SESSION['error'] = 'Token de seguridad inválido. Por favor, intenta de nuevo.';
     header('Location: register.php');
     exit;
 }
@@ -67,7 +69,7 @@ try {
     }
 
     if (!empty($errors)) {
-        SessionManager::setFlash('error', implode('<br>', $errors));
+        $_SESSION['error'] = implode('<br>', $errors);
         header('Location: register.php');
         exit;
     }
@@ -95,11 +97,11 @@ try {
             $verificationUrl = "http://localhost/AgroConecta_v2/public/verify-email.php?token=" . urlencode($token);
             error_log("Email verification URL for {$email}: {$verificationUrl}");
             
-            SessionManager::setFlash('success', '¡Cuenta creada exitosamente! 📧 Revisa tu email para verificar tu cuenta antes de iniciar sesión.');
+            $_SESSION['success'] = '¡Cuenta creada exitosamente! 📧 Revisa tu email para verificar tu cuenta antes de iniciar sesión.';
             error_log("User registered successfully: {$email} (ID: {$userId})");
         } else {
             // Si falla la generación del token, aún así permitir el registro
-            SessionManager::setFlash('success', '¡Cuenta creada exitosamente! Puedes iniciar sesión ahora.');
+            $_SESSION['success'] = '¡Cuenta creada exitosamente! Puedes iniciar sesión ahora.';
             error_log("User registered but verification token generation failed: {$email}");
         }
         
@@ -111,7 +113,7 @@ try {
 
 } catch (Exception $e) {
     error_log("Registration error: " . $e->getMessage());
-    SessionManager::setFlash('error', 'Error al crear la cuenta. Inténtalo de nuevo.');
+    $_SESSION['error'] = 'Error al crear la cuenta. Inténtalo de nuevo.';
     header('Location: register.php');
     exit;
 }
