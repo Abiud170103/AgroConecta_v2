@@ -261,7 +261,7 @@ ob_end_clean();
                         <p class="text-muted mb-0">Monitorea tus ventas y rendimiento</p>
                     </div>
                     <div>
-                        <button class="btn btn-outline-primary me-2">
+                        <button class="btn btn-outline-primary me-2" onclick="exportarReporteVentas()">
                             <i class="fas fa-download me-1"></i>
                             Exportar Reporte
                         </button>
@@ -518,6 +518,198 @@ ob_end_clean();
         });
 
         // Funciones de gestión de ventas
+        function exportarReporteVentas() {
+            // Mostrar modal para seleccionar tipo de reporte
+            const modalHtml = `
+                <div class="modal fade" id="modalExportarReporte" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background: var(--primary-color); color: white;">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-download me-2"></i>
+                                    Exportar Reporte de Ventas
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Periodo del Reporte</label>
+                                    <select class="form-control" id="periodoReporte">
+                                        <option value="hoy">Hoy</option>
+                                        <option value="semana">Esta Semana</option>
+                                        <option value="mes" selected>Este Mes</option>
+                                        <option value="trimestre">Este Trimestre</option>
+                                        <option value="ano">Este Año</option>
+                                        <option value="personalizado">Periodo Personalizado</option>
+                                    </select>
+                                </div>
+                                <div id="fechasPersonalizadas" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label class="form-label">Fecha Inicio</label>
+                                            <input type="date" class="form-control" id="fechaInicio">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label">Fecha Fin</label>
+                                            <input type="date" class="form-control" id="fechaFin">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label">Formato de Exportación</label>
+                                    <div class="d-flex gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="formato" value="pdf" id="formatoPDF" checked>
+                                            <label class="form-check-label" for="formatoPDF">
+                                                <i class="fas fa-file-pdf text-danger me-1"></i> PDF
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="formato" value="excel" id="formatoExcel">
+                                            <label class="form-check-label" for="formatoExcel">
+                                                <i class="fas fa-file-excel text-success me-1"></i> Excel
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="formato" value="csv" id="formatoCSV">
+                                            <label class="form-check-label" for="formatoCSV">
+                                                <i class="fas fa-file-csv text-info me-1"></i> CSV
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Incluir en el Reporte</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="incluirGraficos" checked>
+                                        <label class="form-check-label" for="incluirGraficos">
+                                            Gráficos y estadísticas
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="incluirDetalles" checked>
+                                        <label class="form-check-label" for="incluirDetalles">
+                                            Detalle de transacciones
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="incluirProductos">
+                                        <label class="form-check-label" for="incluirProductos">
+                                            Análisis por productos
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" onclick="procesarExportacion()">
+                                    <i class="fas fa-download me-2"></i>Generar Reporte
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Agregar modal al DOM si no existe
+            if (!document.getElementById('modalExportarReporte')) {
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+            }
+            
+            // Configurar evento para mostrar/ocultar fechas personalizadas
+            document.getElementById('periodoReporte').addEventListener('change', function() {
+                const fechasDiv = document.getElementById('fechasPersonalizadas');
+                if (this.value === 'personalizado') {
+                    fechasDiv.style.display = 'block';
+                } else {
+                    fechasDiv.style.display = 'none';
+                }
+            });
+            
+            // Mostrar modal
+            new bootstrap.Modal(document.getElementById('modalExportarReporte')).show();
+        }
+        
+        function procesarExportacion() {
+            const periodo = document.getElementById('periodoReporte').value;
+            const formato = document.querySelector('input[name="formato"]:checked').value;
+            const incluirGraficos = document.getElementById('incluirGraficos').checked;
+            const incluirDetalles = document.getElementById('incluirDetalles').checked;
+            const incluirProductos = document.getElementById('incluirProductos').checked;
+            
+            let fechaInicio = '';
+            let fechaFin = '';
+            
+            if (periodo === 'personalizado') {
+                fechaInicio = document.getElementById('fechaInicio').value;
+                fechaFin = document.getElementById('fechaFin').value;
+                
+                if (!fechaInicio || !fechaFin) {
+                    alert('Por favor selecciona las fechas de inicio y fin para el periodo personalizado');
+                    return;
+                }
+            }
+            
+            // Cerrar modal
+            bootstrap.Modal.getInstance(document.getElementById('modalExportarReporte')).hide();
+            
+            // Mostrar indicador de carga
+            const btnExportar = event.target;
+            const textoOriginal = btnExportar.innerHTML;
+            btnExportar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generando...';
+            btnExportar.disabled = true;
+            
+            // Preparar parámetros
+            const params = new URLSearchParams({
+                action: 'exportar_ventas',
+                periodo: periodo,
+                formato: formato,
+                incluir_graficos: incluirGraficos ? '1' : '0',
+                incluir_detalles: incluirDetalles ? '1' : '0',
+                incluir_productos: incluirProductos ? '1' : '0',
+                fecha_inicio: fechaInicio,
+                fecha_fin: fechaFin
+            });
+            
+            // Realizar petición de exportación
+            fetch('api/reportes.php?' + params.toString())
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    }
+                    throw new Error('Error en la exportación');
+                })
+                .then(blob => {
+                    // Crear enlace de descarga
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    
+                    // Determinar nombre del archivo
+                    const fecha = new Date().toISOString().slice(0, 10);
+                    let extension = 'pdf';
+                    if (formato === 'excel') extension = 'xlsx';
+                    if (formato === 'csv') extension = 'csv';
+                    
+                    a.download = `reporte_ventas_${periodo}_${fecha}.${extension}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    alert('Reporte exportado exitosamente');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al generar el reporte. Por favor intenta de nuevo.');
+                })
+                .finally(() => {
+                    // Restaurar botón
+                    btnExportar.innerHTML = textoOriginal;
+                    btnExportar.disabled = false;
+                });
+        }
+        
         function verDetalle(id) {
             alert('Ver detalles de venta #' + id + ' - Funcionalidad en desarrollo');
         }
