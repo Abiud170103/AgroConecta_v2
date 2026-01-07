@@ -428,22 +428,342 @@ ob_end_clean();
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Modal para Nuevo Producto -->
+    <div class="modal fade" id="modalNuevoProducto" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background: var(--primary-color); color: white;">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Nuevo Producto
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formNuevoProducto">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre del Producto *</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Descripción *</label>
+                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Precio *</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="precio" name="precio" step="0.01" min="0" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Stock *</label>
+                                            <input type="number" class="form-control" id="stock" name="stock" min="0" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Categoría *</label>
+                                            <select class="form-control" id="categoria" name="categoria" required>
+                                                <option value="">Seleccionar...</option>
+                                                <option value="Frutas">Frutas</option>
+                                                <option value="Verduras">Verduras</option>
+                                                <option value="Cereales">Cereales</option>
+                                                <option value="Legumbres">Legumbres</option>
+                                                <option value="Hierbas">Hierbas y Especias</option>
+                                                <option value="Lacteos">Lácteos</option>
+                                                <option value="Carnes">Carnes</option>
+                                                <option value="Otros">Otros</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Unidad de Medida *</label>
+                                            <select class="form-control" id="unidad_medida" name="unidad_medida" required>
+                                                <option value="">Seleccionar...</option>
+                                                <option value="kg">Kilogramos (kg)</option>
+                                                <option value="g">Gramos (g)</option>
+                                                <option value="pza">Piezas (pza)</option>
+                                                <option value="lt">Litros (lt)</option>
+                                                <option value="ml">Mililitros (ml)</option>
+                                                <option value="docena">Docena</option>
+                                                <option value="paquete">Paquete</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Imagen del Producto</label>
+                                    <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                                    <small class="form-text text-muted">Formatos: JPG, PNG, GIF (máx 2MB)</small>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="activo" name="activo" checked>
+                                    <label class="form-check-label" for="activo">
+                                        Producto Activo
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarProducto()">
+                        <i class="fas fa-save me-2"></i>Guardar Producto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Producto -->
+    <div class="modal fade" id="modalEditarProducto" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background: var(--secondary-color); color: white;">
+                    <h5 class="modal-title">
+                        <i class="fas fa-edit me-2"></i>
+                        Editar Producto
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarProducto">
+                        <input type="hidden" id="edit_id_producto" name="id_producto">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre del Producto *</label>
+                                    <input type="text" class="form-control" id="edit_nombre" name="nombre" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Descripción *</label>
+                                    <textarea class="form-control" id="edit_descripcion" name="descripcion" rows="3" required></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Precio *</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="edit_precio" name="precio" step="0.01" min="0" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Stock *</label>
+                                            <input type="number" class="form-control" id="edit_stock" name="stock" min="0" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Categoría *</label>
+                                            <select class="form-control" id="edit_categoria" name="categoria" required>
+                                                <option value="">Seleccionar...</option>
+                                                <option value="Frutas">Frutas</option>
+                                                <option value="Verduras">Verduras</option>
+                                                <option value="Cereales">Cereales</option>
+                                                <option value="Legumbres">Legumbres</option>
+                                                <option value="Hierbas">Hierbas y Especias</option>
+                                                <option value="Lacteos">Lácteos</option>
+                                                <option value="Carnes">Carnes</option>
+                                                <option value="Otros">Otros</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Unidad de Medida *</label>
+                                            <select class="form-control" id="edit_unidad_medida" name="unidad_medida" required>
+                                                <option value="">Seleccionar...</option>
+                                                <option value="kg">Kilogramos (kg)</option>
+                                                <option value="g">Gramos (g)</option>
+                                                <option value="pza">Piezas (pza)</option>
+                                                <option value="lt">Litros (lt)</option>
+                                                <option value="ml">Mililitros (ml)</option>
+                                                <option value="docena">Docena</option>
+                                                <option value="paquete">Paquete</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Nueva Imagen (opcional)</label>
+                                    <input type="file" class="form-control" id="edit_imagen" name="imagen" accept="image/*">
+                                    <small class="form-text text-muted">Dejar vacío para mantener imagen actual</small>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="edit_activo" name="activo">
+                                    <label class="form-check-label" for="edit_activo">
+                                        Producto Activo
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" onclick="actualizarProducto()">
+                        <i class="fas fa-save me-2"></i>Actualizar Producto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script>
+        function guardarProducto() {
+            const form = document.getElementById('formNuevoProducto');
+            const formData = new FormData(form);
+            formData.append('action', 'crear');
+            
+            // Validar campos requeridos
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            fetch('api/productos.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Producto creado exitosamente');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al crear el producto');
+            });
+        }
+        
         function editarProducto(id) {
-            console.log('Editando producto:', id);
-            // Implementar funcionalidad de edición
+            // Obtener datos del producto
+            fetch(`api/productos.php?action=obtener&id=${id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const producto = data.producto;
+                    
+                    // Llenar el formulario de edición
+                    document.getElementById('edit_id_producto').value = producto.id;
+                    document.getElementById('edit_nombre').value = producto.nombre;
+                    document.getElementById('edit_descripcion').value = producto.descripcion;
+                    document.getElementById('edit_precio').value = producto.precio;
+                    document.getElementById('edit_stock').value = producto.stock;
+                    document.getElementById('edit_categoria').value = producto.categoria;
+                    document.getElementById('edit_unidad_medida').value = producto.unidad_medida;
+                    document.getElementById('edit_activo').checked = producto.estado === 'activo';
+                    
+                    // Mostrar modal
+                    new bootstrap.Modal(document.getElementById('modalEditarProducto')).show();
+                } else {
+                    alert('Error al cargar el producto: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar el producto');
+            });
+        }
+        
+        function actualizarProducto() {
+            const form = document.getElementById('formEditarProducto');
+            const formData = new FormData(form);
+            formData.append('action', 'actualizar');
+            
+            // Validar campos requeridos
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            fetch('api/productos.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Producto actualizado exitosamente');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al actualizar el producto');
+            });
         }
         
         function eliminarProducto(id) {
-            if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
-                console.log('Eliminando producto:', id);
-                // Implementar funcionalidad de eliminación
+            if (confirm('¿Estás seguro de que quieres eliminar este producto? Esta acción no se puede deshacer.')) {
+                fetch('api/productos.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'eliminar',
+                        id: id
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Producto eliminado exitosamente');
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar el producto');
+                });
             }
         }
         
         function verDetalles(id) {
-            console.log('Viendo detalles del producto:', id);
-            // Implementar vista de detalles para admin
+            // Para admin: mostrar detalles del producto
+            fetch(`api/productos.php?action=obtener&id=${id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const producto = data.producto;
+                    alert(`Detalles del Producto:\n\nNombre: ${producto.nombre}\nPrecio: $${producto.precio}\nStock: ${producto.stock} ${producto.unidad_medida}\nVendedor: ${producto.vendedor}\nEstado: ${producto.estado}`);
+                } else {
+                    alert('Error al cargar detalles: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar los detalles');
+            });
         }
     </script>
 </body>
