@@ -1,0 +1,23 @@
+graph TD
+    A["Usuario Web<br/>Chrome, Firefox, Safari"] 
+    
+    subgraph "Aplicación AgroConecta"
+        B["Frontend<br/>HTML/CSS/JS + Bootstrap"]
+        C["PHP Pages<br/>Dashboard, Productos, Ventas"]
+        D["REST APIs<br/>JSON Responses"]
+        E["Core Classes<br/>Database + SessionManager"]
+        F[("MySQL Database<br/>6 Tablas principales")]
+    end
+    
+    A --> B
+    B --> C
+    B --> D
+    C --> E
+    D --> E
+    E --> F
+    
+    classDef user fill:#ffeb3b,stroke:#f57f17,stroke-width:3px
+    classDef app fill:#e3f2fd,stroke:#0277bd,stroke-width:2px
+    
+    class A user
+    class B,C,D,E,F app

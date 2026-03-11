@@ -1,0 +1,31 @@
+graph TD
+    A[Usuario] --> B{Tipo de Usuario}
+    B -->|Cliente| C[Dashboard Cliente]
+    B -->|Vendedor| D[Dashboard Vendedor]
+    B -->|Admin| E[Sistema Admin]
+    
+    C --> F[Catálogo de Productos]
+    C --> G[Carrito de Compras]
+    C --> H[Lista de Favoritos]
+    
+    D --> I[Gestión de Productos]
+    D --> J[Reportes de Ventas]
+    
+    E --> K[Monitor del Sistema]
+    E --> L[Configuración General]
+    E --> M[Gestión de Usuarios]
+    
+    F --> N[Base de Datos MySQL]
+    G --> N
+    H --> N
+    I --> N
+    J --> N
+    K --> N
+    L --> N
+    M --> N
+    
+    style A fill:#e1f5fe
+    style N fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#ffebee

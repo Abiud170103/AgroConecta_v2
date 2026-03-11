@@ -1,0 +1,85 @@
+graph TD
+    %% CAPA DE PRESENTACIÓN
+    subgraph "FRONTEND - Capa de Presentación"
+        A1["Páginas Web<br/>HTML5 + CSS3 + Bootstrap 5"]
+        A2["JavaScript<br/>Interactividad + AJAX"]
+        A3["Recursos Estáticos<br/>CSS, Images, Icons"]
+    end
+
+    %% CAPA DE APLICACIÓN
+    subgraph "BACKEND - Capa de Aplicación"
+        B1["Páginas PHP<br/>dashboard.php, productos.php<br/>catalogo.php, ventas.php"]
+        B2["APIs REST<br/>api/productos.php<br/>api/carrito.php<br/>api/reportes.php"]
+        B3["SessionManager<br/>Autenticación y Sesiones"]
+    end
+
+    %% CAPA DE LÓGICA
+    subgraph "CORE - Capa de Lógica"
+        C1["Database Class<br/>Singleton Pattern<br/>PDO Connection"]
+        C2["Validaciones<br/>Sanitización de Datos<br/>Control de Permisos"]
+        C3["Generación de Reportes<br/>PDF, Excel, CSV"]
+    end
+
+    %% CAPA DE DATOS
+    subgraph "DATOS - Capa de Persistencia"
+        D1[("usuario<br/>Clientes, Vendedores, Admins")]
+        D2[("producto<br/>Catálogo e Inventario")]
+        D3[("carrito<br/>Items por Usuario")]
+        D4[("favorito<br/>Lista de Favoritos")]
+        D5[("pedido<br/>Órdenes de Compra")]
+        D6[("detalle_pedido<br/>Items de cada Pedido")]
+    end
+
+    %% FLUJO PRINCIPAL
+    A1 --> B1
+    A2 --> B2
+    B1 --> B3
+    B2 --> B3
+    B3 --> C1
+    C1 --> D1
+    C1 --> D2
+    C1 --> D3
+    C1 --> D4
+    C1 --> D5
+    C1 --> D6
+
+    %% FLUJOS ESPECÍFICOS
+    B1 --> C2
+    B2 --> C2
+    B2 --> C3
+    C2 --> C1
+
+    %% ROLES Y PERMISOS
+    subgraph "ROLES DE USUARIO"
+        E1["Cliente<br/>- Ver catálogo<br/>- Gestionar carrito<br/>- Realizar pedidos"]
+        E2["Vendedor<br/>- Todo lo de Cliente<br/>- Gestionar productos<br/>- Ver reportes de ventas"]
+        E3["Administrador<br/>- Acceso completo<br/>- Gestión de sistema<br/>- Reportes globales"]
+    end
+
+    B3 --> E1
+    B3 --> E2
+    B3 --> E3
+
+    %% ARCHIVOS Y UPLOADS
+    subgraph "SISTEMA DE ARCHIVOS"
+        F1["uploads/<br/>Imágenes de productos"]
+        F2["temp/<br/>Reportes generados"]
+    end
+
+    C3 --> F2
+    B2 --> F1
+
+    %% ESTILOS
+    classDef frontend fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef backend fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef core fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef database fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef roles fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef files fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+
+    class A1,A2,A3 frontend
+    class B1,B2,B3 backend
+    class C1,C2,C3 core
+    class D1,D2,D3,D4,D5,D6 database
+    class E1,E2,E3 roles
+    class F1,F2 files

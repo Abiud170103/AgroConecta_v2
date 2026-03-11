@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant U as Usuario
+    participant F as Frontend
+    participant P as PHP Page
+    participant A as API
+    participant S as SessionManager
+    participant D as Database
+    participant B as MySQL
+
+    U->>F: Interacción (click, form)
+    F->>P: Request HTTP
+    P->>S: Verificar autenticación
+    S-->>P: Usuario autenticado
+    P->>A: Llamada a API (si necesario)
+    A->>D: Operación de datos
+    D->>B: Query SQL
+    B-->>D: Resultados
+    D-->>A: Datos procesados
+    A-->>P: Response JSON
+    P-->>F: HTML + datos
+    F-->>U: UI actualizada
